@@ -8,6 +8,14 @@ const panel=document.querySelector('sports-hub-panel');
 const params=new URLSearchParams(location.search);
 let response=await fetch(params.has('live')?'./live-data.json':'./demo-data.json');
 const data=await response.json();
-panel.panel={config:{entry_id:'preview',version:'0.1.0',preview:true,preview_now:data.generated_at}};
-panel.hass={language:params.get('lang')||'de',config:{time_zone:data.time_zone},user:{id:'preview',is_admin:false},panels:{},callWS:async()=>data};
+let saved=JSON.parse(localStorage.getItem('sports-hub-preview-dashboards')||'{"dashboards":[],"sidebar":[]}');
+panel.panel={config:{entry_id:'preview',version:'0.2.0',preview:true,preview_now:data.generated_at,dashboard:saved.sidebar.find(p=>p.key===params.get('sidebar'))}};
+panel.hass={language:params.get('lang')||'de',config:{time_zone:data.time_zone},user:{id:'preview',is_admin:true},panels:{},callWS:async msg=>{
+  if(msg.type==='sports_hub/data')return data;
+  if(msg.action==='save'&&msg.confirmed){saved.dashboards=saved.dashboards.filter(p=>p.key!==msg.dashboard.key);saved.dashboards.push(msg.dashboard);}
+  if(msg.action==='remove')saved.dashboards=saved.dashboards.filter(p=>p.key!==msg.key);
+  if(msg.action==='publish'&&msg.confirmed){const p=saved.dashboards.find(p=>p.key===msg.key);saved.sidebar=saved.sidebar.filter(p=>p.key!==msg.key);saved.sidebar.push({...p,path:'docs/preview.html?sidebar='+encodeURIComponent(p.key)+'&lang='+encodeURIComponent(params.get('lang')||'de')+(params.has('live')?'&live=1':'')});}
+  if(msg.action==='unpublish')saved.sidebar=saved.sidebar.filter(p=>p.key!==msg.key);
+  localStorage.setItem('sports-hub-preview-dashboards',JSON.stringify(saved));return structuredClone(saved);
+}};
 </script></html>
