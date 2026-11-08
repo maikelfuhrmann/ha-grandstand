@@ -1,0 +1,13 @@
+Generation (built-in imagegen):
+Use case: logo-brand
+Asset type: memorable app icon and repository logo for GRANDSTAND, a multilingual sports dashboard for Home Assistant.
+Primary request: Create one striking, immediately recognizable brand mark. Abstract a grandstand/stadium into a bold geometric G with a dynamic open corner and stepped seating, a single coherent silhouette. It should feel like a premium modern sports media brand and remain recognizable at 32 pixels.
+Style: flat vector-like logo, exceptionally clean geometry, strong optical balance, generous negative space, no effects.
+Color palette: bright electric lime #BDFB62 as the dominant mark, tiny optional aqua #56DACD accent. Intended to sit on deep navy #0B1117.
+Composition: one large centered icon, square canvas with modest 10% clear margins.
+Text: none. No letters other than the implied G, no wordmark.
+Background: genuinely transparent.
+Avoid: balls, trophies, racing flags, generic swooshes, thin lines, gradients, shadows, 3D, mockups, watermarks, multiple proposals, similarity to existing media company logos.
+
+Final edit (built-in imagegen; first mark as reference):
+Edit this Grandstand logo preserving its overall G/stadium silhouette. Remove every single speckle, grain and artifact completely. Make all shapes perfectly flat solid #BDFB62 with no gradients. Make all negative spaces pristine and clean. Put the clean mark on a perfectly solid #0B1117 square background instead of transparency. Keep generous margins. No texture, no text, no shadow. Crisp vector-like professional app icon.

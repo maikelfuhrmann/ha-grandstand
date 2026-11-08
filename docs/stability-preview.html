@@ -1,0 +1,20 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Grandstand render stability check</title><style>body{font:16px system-ui;background:#0b1117;color:#fff;margin:0}button{margin:12px;padding:12px}#view{height:600px}#result{position:fixed;top:0;right:10px;background:#0b1117;padding:12px;z-index:8}</style><button id="run">Run 50 live updates</button><output id="result">Ready</output><div id="view"></div><script type="module">
+import {patchPanel} from '../custom_components/sports_hub/frontend/render.js';
+let connects=0,loads=0;
+customElements.define('test-live-card',class extends HTMLElement{connectedCallback(){connects++}});
+const root=document.querySelector('#view').attachShadow({mode:'open'});
+const html=n=>`<style>.shell{height:600px;overflow:auto;overflow-anchor:none}.live{height:500px;overflow:auto}.space{height:800px}</style><div class="shell"><h1>Live · update ${n}</h1><section class="live" data-f1-slot="timing"></section><section class="live" data-f1-slot="live-control"></section><div class="space">Scroll stability</div><section data-radar-id="test"><h2>Venue radar</h2><iframe title="Radar" src="about:blank"></iframe></section><div class="space"></div></div>`;
+patchPanel(root,html(0));
+for(const slot of root.querySelectorAll('[data-f1-slot]')){const card=document.createElement('test-live-card');card.textContent='Initial timing';slot.append(card);}
+const frame=root.querySelector('iframe');frame.addEventListener('load',()=>loads++);
+document.querySelector('#run').onclick=async()=>{
+ const shell=root.querySelector('.shell');shell.scrollTop=900;
+ const cards=[...root.querySelectorAll('test-live-card')],before=connects,loadBefore=loads;
+ for(let n=1;n<=50;n++){
+  patchPanel(root,html(n));cards[0].innerHTML='<p>Timing '+n+'</p>'.repeat(n%2?22:4);cards[1].innerHTML='<p>Race control '+n+'</p>'.repeat(n%3?3:40);
+  await new Promise(r=>requestAnimationFrame(r));
+ }
+ const result={scrollTop:shell.scrollTop,connectedDelta:connects-before,iframeSame:frame===root.querySelector('iframe'),iframeLoads:loads-loadBefore,cardsSame:cards.every((c,i)=>c===root.querySelectorAll('test-live-card')[i])};
+ document.querySelector('#result').textContent=JSON.stringify(result);
+};
+</script></html>

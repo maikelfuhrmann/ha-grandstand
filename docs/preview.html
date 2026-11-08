@@ -1,17 +1,17 @@
 <!doctype html>
-<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sports Hub · Preview</title>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Grandstand · Preview</title>
 <style>html,body{height:100%;margin:0;background:#0b1017}sports-hub-panel{height:100vh}</style>
 <sports-hub-panel></sports-hub-panel>
 <script type="module">
 await import('../custom_components/sports_hub/frontend/sports-hub.js?preview='+Date.now());
 const panel=document.querySelector('sports-hub-panel');
 const params=new URLSearchParams(location.search);
-let response=await fetch(params.has('live')?'./live-data.json':'./demo-data.json');
+let response=await fetch((params.has('live')?'./live-data.json':'./demo-data.json')+'?v='+Date.now());
 const data=await response.json();
 const contexts=await fetch(params.has('live')?'./rich-data.json':'./demo-context.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
 const matches=params.has('live')?await fetch('./match-data.json').then(r=>r.ok?r.json():{}).catch(()=>({})):{};
 let saved=JSON.parse(localStorage.getItem('sports-hub-preview-dashboards')||'{"dashboards":[],"sidebar":[]}');
-panel.panel={config:{entry_id:'preview',version:'0.3.5',preview:true,preview_now:data.generated_at,dashboard:saved.sidebar.find(p=>p.key===params.get('sidebar'))}};
+panel.panel={config:{entry_id:'preview',version:'0.4.0',preview:true,preview_now:data.generated_at,dashboard:saved.sidebar.find(p=>p.key===params.get('sidebar'))}};
 panel.hass={language:params.get('lang')||'de',config:{time_zone:data.time_zone},user:{id:'preview',is_admin:true},panels:{},callWS:async msg=>{
   if(msg.type==='sports_hub/data')return data;
   if(msg.type==='sports_hub/match')return structuredClone(matches[msg.league_id+':'+msg.event_id]||{timeline:[],lineups:[],teams:[],player_tables:[]});
