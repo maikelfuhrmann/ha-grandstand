@@ -27,7 +27,9 @@ export const f1DossierMethods={
         content+=slot('weekend',this.t.weekend,[module('calendar','',{range:'weekend',timezone:'home',past:'dim',next:'label'})]);
         if(!this.hideScores){content+=slot('compact-wm',this.t.championship,[standings(false,5),standings(true,5)]);content+=slot('last-control',this.t.raceControl,[module('race_control','',{presentation:'latest_message',limit:1,show_clear_button:false})],false,true);}
       }else if(this.view==='live'){
-        content+=slot('timing',this.t.timing,[module('overview','',{},['meeting','session','session_status','lap_progress','track_status']),module('timing','',{profile:'auto',rows:22,detail_laps:3})],true,true);
+        content+=slot('race-status',this.t.live,[module('overview','',{},['meeting','session','session_status','lap_progress','track_status'])],true,true);
+        if(data.bridge.entities?.driver_positions)content+=slot('circle','Circle of Doom',[],true,true);
+        content+=slot('timing',this.t.timing,[module('timing','',{profile:'auto',rows:22,detail_laps:3})],true,true);
         content+=slot('live-control',this.t.raceControl,[control(60)],false,true);
         content+=slot('weather',this.t.trackWeather,[module('weather','',{content:'track_conditions',presentation:'metrics'})],false,true);
         content+=slot('live-tyres',this.t.tyres,[module('tyres','',{content:'current',rows:22})],false,true);

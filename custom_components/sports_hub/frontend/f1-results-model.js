@@ -12,6 +12,22 @@ export function f1CarAsset(team,season){
  const item=String(season)==='2026'?f1Cars2026[f1TeamKey(team)]:null;
  return item?{url:`https://media.formula1.com/image/upload/c_lfill,h_224/q_auto/d_common:f1:2026:fallback:car:2026fallbackcarright.webp/v1740000001/common/f1/2026/${item[0]}/2026${item[0]}carright.webp`,color:'#'+item[1]}:null;
 }
+// Public 2026 portrait paths verified on formula1.com/en/drivers, 2026-11-08.
+// Match the person's name and season, never just a racing number.
+const f1Portraits2026={
+ georgerussell:['mercedes','georus01'],kimiantonelli:['mercedes','andant01'],charlesleclerc:['ferrari','chalec01'],lewishamilton:['ferrari','lewham01'],
+ maxverstappen:['redbullracing','maxver01'],isackhadjar:['redbullracing','isahad01'],landonorris:['mclaren','lannor01'],oscarpiastri:['mclaren','oscpia01'],
+ liamlawson:['racingbulls','lialaw01'],arvidlindblad:['racingbulls','arvlin01'],pierregasly:['alpine','piegas01'],francocolapinto:['alpine','fracol01'],
+ oliverbearman:['haasf1team','olibea01'],rafaelcamara:['haasf1team','rafcam01'],nicohulkenberg:['audi','nichul01'],gabrielbortoleto:['audi','gabbor01'],
+ carlossainz:['williams','carsai01'],alexanderalbon:['williams','alealb01'],fernandoalonso:['astonmartin','feralo01'],lancestroll:['astonmartin','lanstr01'],
+ sergioperez:['cadillac','serper01'],valtteribottas:['cadillac','valbot01'],
+};
+export function f1DriverAsset(name,season){
+ let key=String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z]/g,'');
+ key=({andreakimiantonelli:'kimiantonelli',alexalbon:'alexanderalbon',nicohuelkenberg:'nicohulkenberg'})[key]||key;
+ const item=String(season)==='2026'?f1Portraits2026[key]:null;
+ return item?{url:`https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/${item[0]}/${item[1]}/2026${item[0]}${item[1]}right.webp`}:null;
+}
 export function f1WeekendModel(resource,weekend={},native=false,now=Date.now()){
  const model=startingGridModel(resource),packet=resource?.data;
  // Do not briefly reveal public results while the protected channel checks spoiler state.
