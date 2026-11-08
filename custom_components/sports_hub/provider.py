@@ -7,7 +7,7 @@ import aiohttp
 
 from .catalog import LEAGUES
 from .const import API_ROOT, VERSION
-from .model import normalize_scoreboard, parse_time, refresh_seconds
+from .model import normalize_scoreboard, parse_time, refresh_seconds, league_branding
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -65,6 +65,7 @@ class ScoreboardProvider:
             self.cache[key] = {
                 "events": events, "updated_at": now.isoformat(), "error": None,
                 "partial": len(payload["events"]) >= 1000, "failures": 0,
+                "branding": league_branding(payload),
                 "next_poll": now + timedelta(seconds=interval),
             }
         except (aiohttp.ClientError, asyncio.TimeoutError, ValueError, KeyError, TypeError) as err:
@@ -123,7 +124,8 @@ class ScoreboardProvider:
             events.extend(valid)
             errors = [s["error"] for s in present if s.get("error")]
             leagues.append({
-                **LEAGUES[league_id], "updated_at": max((s.get("updated_at") or "" for s in present), default="") or None,
+                **LEAGUES[league_id], **next((s["branding"] for s in reversed(present) if s.get("branding", {}).get("logo")), {}),
+                "updated_at": max((s.get("updated_at") or "" for s in present), default="") or None,
                 "error": errors[0] if errors else None, "stale": bool(errors),
                 "partial": any(s.get("partial") for s in present),
                 "loading": len(present) < len(days), "failed_days": len(errors),

@@ -6,6 +6,21 @@ Each competition becomes an event, including tennis matches and UFC undercards.
 
 from datetime import datetime, timezone
 from urllib.parse import urlparse
+import re
+
+
+def safe_color(value):
+    """Accept hex colors only; never pass provider strings into CSS."""
+    value = str(value or "").removeprefix("#")
+    return f"#{value.lower()}" if re.fullmatch(r"[0-9a-fA-F]{6}", value) else ""
+
+
+def league_branding(payload):
+    leagues = payload.get("leagues") or []
+    league = leagues[0] if leagues and isinstance(leagues[0], dict) else {}
+    logos = league.get("logos") or []
+    logo = next((safe_url(item.get("href")) for item in logos if isinstance(item, dict) and safe_url(item.get("href"))), "")
+    return {"logo": logo, "color": safe_color(league.get("color")), "alternate_color": safe_color(league.get("alternateColor"))}
 
 
 def parse_time(value):
@@ -59,10 +74,11 @@ def normalize_competitor(raw, sport):
     except (ValueError, TypeError):
         order = 999
     return {
-        "key": key, "id": identifier,
+        "key": key, "id": identifier, "kind": kind,
         "name": text(entity.get("displayName") or entity.get("fullName") or entity.get("name") or "TBD"),
         "short_name": text(entity.get("shortDisplayName") or entity.get("abbreviation") or entity.get("displayName") or "TBD", 80),
         "abbreviation": text(entity.get("abbreviation"), 12),
+        "color": safe_color(entity.get("color")), "alternate_color": safe_color(entity.get("alternateColor")),
         "logo": safe_url(logo), "home_away": text(raw.get("homeAway"), 10),
         "score": score_value(raw.get("score")), "winner": raw.get("winner") if isinstance(raw.get("winner"), bool) else None,
         "order": order, "record": text(record, 40), "rank": rank if isinstance(rank, int) and 0 < rank < 100 else None,

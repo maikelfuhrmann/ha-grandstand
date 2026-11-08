@@ -10,6 +10,7 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from .catalog import SPORTS
 from .const import DOMAIN, PANEL_NAME, PANEL_PATH, STATIC_PATH, VERSION
 from .coordinator import SportsHubCoordinator
+from .dashboards import DashboardManager, DATA_KEY, websocket_dashboards
 
 PLATFORMS = [Platform.SENSOR]
 
@@ -20,6 +21,10 @@ async def async_setup(hass, config):
         StaticPathConfig(STATIC_PATH, str(Path(__file__).parent / "frontend"), cache_headers=False)
     ])
     websocket_api.async_register_command(hass, websocket_data)
+    manager = DashboardManager(hass)
+    await manager.load()
+    hass.data[DATA_KEY] = manager
+    websocket_api.async_register_command(hass, websocket_dashboards)
     return True
 
 
@@ -39,11 +44,13 @@ async def async_setup_entry(hass, entry):
         config={"entry_id": entry.entry_id, "version": VERSION},
         require_admin=False,
     )
+    await hass.data[DATA_KEY].activate(entry.entry_id)
     return True
 
 
 async def async_unload_entry(hass, entry):
     if unloaded := await hass.config_entries.async_unload_platforms(entry, PLATFORMS):
+        hass.data[DATA_KEY].unload()
         frontend.async_remove_panel(hass, PANEL_PATH)
         hass.data[DOMAIN].pop(entry.entry_id, None)
     return unloaded
