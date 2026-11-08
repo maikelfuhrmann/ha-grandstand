@@ -43,7 +43,7 @@ This is a custom repository; inclusion in the default marketplace catalog is not
 
 ### Manual installation
 
-Download the `ha-sports-hub-0.3.0.zip` release asset and extract it into your HA configuration directory. The resulting path must be:
+Download the `ha-sports-hub-0.3.1.zip` release asset and extract it into your HA configuration directory. The resulting path must be:
 
 ```text
 config/custom_components/sports_hub/manifest.json
@@ -73,7 +73,7 @@ Logos and team colors come from the provider when available; supported league pa
 
 ## Match center
 
-Open **Details** on a team-sport match to see its Overview, Timeline, Lineups, Match Statistics and Player Statistics. Soccer displays published formations, starting XI, bench, goals, cards, substitutions and other key events. Supported ESPN team-sport summaries also expose basketball/hockey play-by-play, NFL drive events and sport-specific player box scores when available. Tennis, MMA and leaderboard sports retain their event details rather than borrowing a different contest's summary.
+Open **Details** on a team-sport match to see its Overview, Timeline, Lineups, Match Statistics and Player Statistics. Soccer displays the published starting XI on a football pitch in club colors, with goalkeeper, formation, player names and shirt numbers. Both teams attack upward in this schematic; these are not live player coordinates. The substitutes remain below the pitch, and the starting XI is also available as a text list. If the source does not supply a complete XI, a valid formation and supported player roles, the published list remains available without guessed positions. Goals, cards, substitutions and other key events appear in the timeline. Supported ESPN team-sport summaries also expose basketball/hockey play-by-play, NFL drive events and sport-specific player box scores when available. Tennis, MMA and leaderboard sports retain their event details rather than borrowing a different contest's summary.
 
 The open view checks for updates every 30 seconds, with 30-second server caching for live/near-start matches and 15-minute caching otherwise. It preserves the selected tab and scroll position. Spoiler protection covers the entire match center until the user reveals that match. A failed refresh retains cached facts with a stale label.
 
@@ -85,6 +85,7 @@ Approve **Formula 1** as a league dashboard to get dedicated Overview, Live, Cha
 
 - **Without additional integrations:** [Jolpica](https://api.jolpi.ca/ergast/) supplies the published season calendar, session times, driver/constructor standings and latest race classification. News comes through the same localized news adapter as other dossiers.
 - **With [F1 Sensor](https://nicxe.github.io/f1_sensor/) installed:** Sports Hub discovers the loaded entry and uses its bundled modular cards. Enable F1 Sensor's dashboard cards in its options. No entry IDs or entity names need to be copied manually. If several F1 Sensor entries are loaded, the first loaded entry is used.
+- Overview and Results include a **staggered starting grid**, with car silhouettes in team colors, driver names/numbers, qualifying times and explicit provisional/confirmed status. Pit-lane starts and unknown positions are separated. The pole side and spacing are schematic. This uses F1 Sensor’s protected starting-grid channel and works without F1TV; it respects its spoiler protection and shows waiting/stale states when appropriate.
 - The live views include timing, map, weather, Race Control, tyres, results/grid, championship progression, FIA documents and investigations. The Strategy tab embeds **Circle of Doom** when the driver-position entity is available. Existing F1 Sensor and Circle of Doom installations are reused. Circle of Doom intentionally retains its English interface.
 - Public timing does not require F1TV. **Live car positions, team radio and detailed pit-stop data are not guaranteed without the additional authorized access required by F1 Sensor.** Sports Hub does not provide or bypass that access. No synthetic car positions or race-control messages are generated.
 - Live modules reflect F1 Sensor's session/availability state. No active session means no new live telemetry. Jolpica data remains available in a separate expandable section even when the F1 Sensor cards fail to load.
