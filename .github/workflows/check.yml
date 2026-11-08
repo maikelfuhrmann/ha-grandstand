@@ -15,7 +15,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - run: pip install homeassistant==2026.11.0
+      - name: Create isolated Home Assistant environment
+        run: |
+          python -m venv .venv
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+          .venv/bin/pip install homeassistant==2026.11.0
       - run: python -m unittest discover -s tests -v
       - run: npm run check
       - run: git diff --exit-code -- custom_components/sports_hub/frontend/sports-hub.js
