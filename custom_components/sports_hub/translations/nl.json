@@ -1,0 +1,53 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sports Hub",
+        "description": "Je complete sportdashboard wordt automatisch aan de zijbalk toegevoegd. Alle grote competities in deze catalogus zijn vooraf geselecteerd. Openbare ESPN-gegevens; geen videoabonnement of API-sleutel nodig. Het eerste laden van het programma kan enkele minuten duren.",
+        "data": {
+          "leagues": "Competities",
+          "days_ahead": "Komende dagen",
+          "days_back": "Dagen met uitslagen"
+        }
+      }
+    },
+    "error": {
+      "no_leagues": "Selecteer minstens één competitie."
+    },
+    "abort": {
+      "already_configured": "Sports Hub is al ingesteld."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Sports Hub",
+        "description": "Je complete sportdashboard wordt automatisch aan de zijbalk toegevoegd. Alle grote competities in deze catalogus zijn vooraf geselecteerd. Openbare ESPN-gegevens; geen videoabonnement of API-sleutel nodig. Het eerste laden van het programma kan enkele minuten duren.",
+        "data": {
+          "leagues": "Competities",
+          "days_ahead": "Komende dagen",
+          "days_back": "Dagen met uitslagen"
+        }
+      }
+    },
+    "error": {
+      "no_leagues": "Selecteer minstens één competitie."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "live_events": {
+        "name": "Live-evenementen"
+      },
+      "scheduled_events": {
+        "name": "Geplande evenementen"
+      },
+      "leagues": {
+        "name": "Competities"
+      },
+      "source_errors": {
+        "name": "Bronfouten"
+      }
+    }
+  }
+}

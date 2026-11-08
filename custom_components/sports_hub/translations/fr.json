@@ -1,0 +1,53 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sports Hub",
+        "description": "Votre tableau de bord sportif complet est ajouté automatiquement à la barre latérale. Les principales compétitions du catalogue sont présélectionnées. Données publiques ESPN ; aucun abonnement vidéo ni clé API requis. Le chargement initial du calendrier peut prendre quelques minutes.",
+        "data": {
+          "leagues": "Compétitions",
+          "days_ahead": "Jours à venir",
+          "days_back": "Jours de résultats"
+        }
+      }
+    },
+    "error": {
+      "no_leagues": "Sélectionnez au moins une compétition."
+    },
+    "abort": {
+      "already_configured": "Sports Hub est déjà configuré."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Sports Hub",
+        "description": "Votre tableau de bord sportif complet est ajouté automatiquement à la barre latérale. Les principales compétitions du catalogue sont présélectionnées. Données publiques ESPN ; aucun abonnement vidéo ni clé API requis. Le chargement initial du calendrier peut prendre quelques minutes.",
+        "data": {
+          "leagues": "Compétitions",
+          "days_ahead": "Jours à venir",
+          "days_back": "Jours de résultats"
+        }
+      }
+    },
+    "error": {
+      "no_leagues": "Sélectionnez au moins une compétition."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "live_events": {
+        "name": "Événements en direct"
+      },
+      "scheduled_events": {
+        "name": "Événements programmés"
+      },
+      "leagues": {
+        "name": "Compétitions"
+      },
+      "source_errors": {
+        "name": "Erreurs de la source"
+      }
+    }
+  }
+}
