@@ -108,3 +108,14 @@ test('car assets are season-scoped and do not confuse the two Red Bull teams',()
  assert.ok(f1CarAsset('Haas F1 Team',2026).url.includes('/haasf1team/'));
  assert.equal(f1CarAsset('McLaren',2027),null);assert.equal(f1CarAsset('Unknown',2026),null);
 });
+
+import {f1DriverAsset} from '../custom_components/sports_hub/frontend/f1-results-model.js';
+test('F1 portraits match verified people and season, including localized name accents',()=>{
+ assert.match(f1DriverAsset('Lando Norris',2026).url,/mclaren\/lannor01/);
+ assert.match(f1DriverAsset('Rafael Câmara',2026).url,/rafcam01/);
+ assert.match(f1DriverAsset('Andrea Kimi ANTONELLI',2026).url,/andant01/);
+ assert.match(f1DriverAsset('Nico Hülkenberg',2026).url,/nichul01/);
+ assert.equal(f1DriverAsset('Lando Norris',2025),null);
+ assert.equal(f1DriverAsset('Unknown Driver',2026),null);
+ assert.equal(f1DriverAsset('1',2026),null);
+});
