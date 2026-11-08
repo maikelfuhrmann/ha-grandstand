@@ -4,6 +4,7 @@ from homeassistant.components import websocket_api
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
+from .match import websocket_match
 from .const import DOMAIN
 from .dashboards import DATA_KEY
 from .enrichment import EnrichmentProvider, LANGUAGES
@@ -28,6 +29,7 @@ def f1_bridge(hass):
 def setup_context(hass):
     hass.data[CONTEXT_KEY]=EnrichmentProvider(async_get_clientsession(hass))
     websocket_api.async_register_command(hass,websocket_context)
+    websocket_api.async_register_command(hass,websocket_match)
 
 
 @websocket_api.websocket_command({'type':'sports_hub/context','key':str,vol.Optional('language',default='en'):str})
