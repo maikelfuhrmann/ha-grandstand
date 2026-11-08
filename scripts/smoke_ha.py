@@ -41,10 +41,23 @@ async def main():
                 assert frontend.async_panel_exists(hass,'sports-hub'),'Panel missing'
                 assert len(hass.states.async_all('sensor'))==4,[s.entity_id for s in hass.states.async_all()]
                 print('PASS: config flow, automatic dashboard registration, four summary sensors',flush=True)
+                from custom_components.sports_hub.dashboards import DATA_KEY, DashboardManager
+                manager=hass.data[DATA_KEY]
+                profile={'kind':'team','target':'soccer:test','sport':'soccer','name':'Test Club','color':'dc052d'}
+                await manager.save('test-user',profile,True)
+                await manager.publish('test-user','team:soccer:test',True,True)
+                path=manager.snapshot('test-user')['sidebar'][0]['path']
+                assert frontend.async_panel_exists(hass,path)
+                restored=DashboardManager(hass);await restored.load()
+                assert len(restored.snapshot('test-user')['dashboards'])==1
+                assert restored.snapshot('other-user')['dashboards']==[]
+                print('PASS: approved personal storage, user isolation, independent sidebar panel',flush=True)
                 assert await hass.config_entries.async_unload(entry.entry_id)
+                assert not frontend.async_panel_exists(hass,path)
                 assert not frontend.async_panel_exists(hass,'sports-hub')
                 assert await hass.config_entries.async_setup(entry.entry_id)
                 assert frontend.async_panel_exists(hass,'sports-hub')
+                assert frontend.async_panel_exists(hass,path)
                 print('PASS: unload and reload without duplicate panels/resources',flush=True)
         finally:
             await hass.async_stop(force=True)
