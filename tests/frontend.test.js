@@ -86,3 +86,25 @@ test('grid respects source spoiler blocking and marks interrupted connections st
  assert.equal(startingGridModel({status:'disconnected',data:packet}).stale,true);
  assert.equal(startingGridModel({status:'ready',data:{...packet,status:'unavailable'}}).grid.length,0);
 });
+
+import {f1CarAsset,f1WeekendModel} from '../custom_components/sports_hub/frontend/f1-results-model.js';
+const weekend={season:'2026',meeting:'Test GP',race_date:'2026-11-08T17:00:00Z',qualifying:{source:'Jolpica',rows:[{number:'63',name:'Driver',team:'Mercedes',position:2,q1:'1:20.000',q2:'1:19.000',q3:'1:18.000'}]},grid:{source:'Formula1.com',rows:[{number:'63',name:'Driver',team:'Mercedes',position:7,time:'1:18.000'}]}};
+test('published grid is distinct from qualifying and exposes penalty movement',()=>{
+ const m=f1WeekendModel(null,weekend,false);assert.equal(m.grid[0].position,7);assert.equal(m.qualifying[0].position,2);assert.equal(m.grid[0].delta,5);assert.equal(m.gridByNumber.get('63'),7);assert.equal(m.status,'published');assert.equal(m.grid[0].time,'1:18.000');
+});
+test('public fallback never reveals rows while protected source blocks or loads',()=>{
+ for(const resource of [null,{status:'loading'},{status:'ready',data:{status:'blocked'}}]){const m=f1WeekendModel(resource,weekend,true);assert.equal(m.grid.length,0);assert.equal(m.qualifying.length,0);}
+ const m=f1WeekendModel({status:'error'},weekend,true);assert.equal(m.grid.length,1);
+});
+test('qualifying-only grid stays provisional and expires after race weekend',()=>{
+ const w={...weekend,grid:{rows:[]}};const before=f1WeekendModel(null,w,false,Date.parse('2026-11-08T12:00Z'));
+ assert.equal(before.status,'provisional');assert.equal(before.grid[0].position,2);assert.equal(before.grid[0].time,'1:18.000');
+ const after=f1WeekendModel(null,w,false,Date.parse('2026-11-10T12:00Z'));assert.equal(after.grid.length,0);assert.equal(after.qualifying.length,1);
+ assert.equal(f1WeekendModel(null,{},false).loading,false);
+});
+test('car assets are season-scoped and do not confuse the two Red Bull teams',()=>{
+ assert.ok(f1CarAsset('Red Bull Racing','2026').url.includes('/redbullracing/'));
+ assert.ok(f1CarAsset('RB F1 Team',2026).url.includes('/racingbulls/'));
+ assert.ok(f1CarAsset('Haas F1 Team',2026).url.includes('/haasf1team/'));
+ assert.equal(f1CarAsset('McLaren',2027),null);assert.equal(f1CarAsset('Unknown',2026),null);
+});
