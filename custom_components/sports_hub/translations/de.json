@@ -1,0 +1,53 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sports Hub",
+        "description": "Dein vollständiges Sport-Dashboard erscheint automatisch in der Seitenleiste. Alle großen verfügbaren Wettbewerbe dieses Katalogs sind vorausgewählt. Öffentliche ESPN-Daten; kein Video-Abo und kein API-Schlüssel erforderlich. Der erste Spielplan kann einige Minuten zum Laden benötigen.",
+        "data": {
+          "leagues": "Wettbewerbe",
+          "days_ahead": "Tage im Voraus",
+          "days_back": "Vergangene Tage mit Ergebnissen"
+        }
+      }
+    },
+    "error": {
+      "no_leagues": "Wähle mindestens einen Wettbewerb aus."
+    },
+    "abort": {
+      "already_configured": "Sports Hub ist bereits eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Sports Hub",
+        "description": "Dein vollständiges Sport-Dashboard erscheint automatisch in der Seitenleiste. Alle großen verfügbaren Wettbewerbe dieses Katalogs sind vorausgewählt. Öffentliche ESPN-Daten; kein Video-Abo und kein API-Schlüssel erforderlich. Der erste Spielplan kann einige Minuten zum Laden benötigen.",
+        "data": {
+          "leagues": "Wettbewerbe",
+          "days_ahead": "Tage im Voraus",
+          "days_back": "Vergangene Tage mit Ergebnissen"
+        }
+      }
+    },
+    "error": {
+      "no_leagues": "Wähle mindestens einen Wettbewerb aus."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "live_events": {
+        "name": "Live-Events"
+      },
+      "scheduled_events": {
+        "name": "Geplante Events"
+      },
+      "leagues": {
+        "name": "Wettbewerbe"
+      },
+      "source_errors": {
+        "name": "Datenquellen mit Fehlern"
+      }
+    }
+  }
+}
