@@ -10,6 +10,7 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from .catalog import SPORTS
 from .const import DOMAIN, PANEL_NAME, PANEL_PATH, STATIC_PATH, VERSION
 from .coordinator import SportsHubCoordinator
+from .context import setup_context
 from .dashboards import DashboardManager, DATA_KEY, websocket_dashboards
 
 PLATFORMS = [Platform.SENSOR]
@@ -25,6 +26,7 @@ async def async_setup(hass, config):
     await manager.load()
     hass.data[DATA_KEY] = manager
     websocket_api.async_register_command(hass, websocket_dashboards)
+    setup_context(hass)
     return True
 
 

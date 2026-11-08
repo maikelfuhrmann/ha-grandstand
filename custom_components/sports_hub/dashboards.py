@@ -8,6 +8,7 @@ from homeassistant.components import frontend, panel_custom, websocket_api
 from homeassistant.helpers.storage import Store
 
 from .catalog import SPORTS
+from .catalog import LEAGUES
 from .const import DOMAIN, PANEL_NAME, STATIC_PATH, VERSION
 from .model import safe_color, safe_url, text
 
@@ -33,6 +34,7 @@ def clean_dashboard(value):
         "name": name, "sport": sport, "logo": safe_url(value.get("logo")),
         "color": safe_color(value.get("color")) or "#315bd6",
         "alternate_color": safe_color(value.get("alternate_color")) or "#ffffff",
+        "league_id": value.get("league_id") if value.get("league_id") in LEAGUES else None,
     }
 
 
