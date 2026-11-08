@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Sports Hub",
+        "title": "Grandstand",
         "description": "Votre tableau de bord sportif complet est ajouté automatiquement à la barre latérale. Les principales compétitions du catalogue sont présélectionnées. Données publiques ESPN ; aucun abonnement vidéo ni clé API requis. Le chargement initial du calendrier peut prendre quelques minutes.",
         "data": {
           "leagues": "Compétitions",
@@ -15,13 +15,13 @@
       "no_leagues": "Sélectionnez au moins une compétition."
     },
     "abort": {
-      "already_configured": "Sports Hub est déjà configuré."
+      "already_configured": "Grandstand est déjà configuré."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Sports Hub",
+        "title": "Grandstand",
         "description": "Votre tableau de bord sportif complet est ajouté automatiquement à la barre latérale. Les principales compétitions du catalogue sont présélectionnées. Données publiques ESPN ; aucun abonnement vidéo ni clé API requis. Le chargement initial du calendrier peut prendre quelques minutes.",
         "data": {
           "leagues": "Compétitions",

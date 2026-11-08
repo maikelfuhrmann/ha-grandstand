@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Sports Hub",
+        "title": "Grandstand",
         "description": "Dein vollständiges Sport-Dashboard erscheint automatisch in der Seitenleiste. Alle großen verfügbaren Wettbewerbe dieses Katalogs sind vorausgewählt. Öffentliche ESPN-Daten; kein Video-Abo und kein API-Schlüssel erforderlich. Der erste Spielplan kann einige Minuten zum Laden benötigen.",
         "data": {
           "leagues": "Wettbewerbe",
@@ -15,13 +15,13 @@
       "no_leagues": "Wähle mindestens einen Wettbewerb aus."
     },
     "abort": {
-      "already_configured": "Sports Hub ist bereits eingerichtet."
+      "already_configured": "Grandstand ist bereits eingerichtet."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Sports Hub",
+        "title": "Grandstand",
         "description": "Dein vollständiges Sport-Dashboard erscheint automatisch in der Seitenleiste. Alle großen verfügbaren Wettbewerbe dieses Katalogs sind vorausgewählt. Öffentliche ESPN-Daten; kein Video-Abo und kein API-Schlüssel erforderlich. Der erste Spielplan kann einige Minuten zum Laden benötigen.",
         "data": {
           "leagues": "Wettbewerbe",

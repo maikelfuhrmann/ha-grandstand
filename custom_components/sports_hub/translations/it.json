@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Sports Hub",
+        "title": "Grandstand",
         "description": "La dashboard sportiva completa viene aggiunta automaticamente alla barra laterale. Le principali competizioni del catalogo sono preselezionate. Dati pubblici ESPN; non servono abbonamenti video o chiavi API. Il caricamento iniziale del calendario può richiedere alcuni minuti.",
         "data": {
           "leagues": "Competizioni",
@@ -15,13 +15,13 @@
       "no_leagues": "Seleziona almeno una competizione."
     },
     "abort": {
-      "already_configured": "Sports Hub è già configurato."
+      "already_configured": "Grandstand è già configurato."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Sports Hub",
+        "title": "Grandstand",
         "description": "La dashboard sportiva completa viene aggiunta automaticamente alla barra laterale. Le principali competizioni del catalogo sono preselezionate. Dati pubblici ESPN; non servono abbonamenti video o chiavi API. Il caricamento iniziale del calendario può richiedere alcuni minuti.",
         "data": {
           "leagues": "Competizioni",

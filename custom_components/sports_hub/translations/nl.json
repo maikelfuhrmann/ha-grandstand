@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Sports Hub",
+        "title": "Grandstand",
         "description": "Je complete sportdashboard wordt automatisch aan de zijbalk toegevoegd. Alle grote competities in deze catalogus zijn vooraf geselecteerd. Openbare ESPN-gegevens; geen videoabonnement of API-sleutel nodig. Het eerste laden van het programma kan enkele minuten duren.",
         "data": {
           "leagues": "Competities",
@@ -15,13 +15,13 @@
       "no_leagues": "Selecteer minstens één competitie."
     },
     "abort": {
-      "already_configured": "Sports Hub is al ingesteld."
+      "already_configured": "Grandstand is al ingesteld."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Sports Hub",
+        "title": "Grandstand",
         "description": "Je complete sportdashboard wordt automatisch aan de zijbalk toegevoegd. Alle grote competities in deze catalogus zijn vooraf geselecteerd. Openbare ESPN-gegevens; geen videoabonnement of API-sleutel nodig. Het eerste laden van het programma kan enkele minuten duren.",
         "data": {
           "leagues": "Competities",
