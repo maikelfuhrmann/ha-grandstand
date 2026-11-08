@@ -15,7 +15,11 @@ Install one integration, choose your competitions, and open **Sports Hub** in th
 - Favorite teams and athletes across competitions. Preferences are stored per HA user on the current browser/device.
 - **Approved personal dashboards** for teams, athletes, and leagues, with logos and editable colors.
 - Optional independent HA sidebar dashboards, published explicitly by an administrator.
-- **Spoiler protection** for scores, records, winners and leaderboard order, with per-event reveal.
+- Full-season club schedules, league tables, cup fixtures, recent form, season statistics, squad and venue details.
+- Club and league news with publisher, publication time and links to the original articles.
+- **Match center** with key events/play-by-play, published starting lineups and substitutes, team-stat comparisons and player box scores.
+- **Formula 1 hub** with race weekend, championship, calendar, results and news; optional F1 Sensor live timing, Race Control, weather, documents, tyre strategy and Circle of Doom.
+- **Spoiler protection** for scores, records, winners, standings, form, news and analysis, with per-event score reveal.
 - HA timezone-aware dates, including overnight US games and daylight-saving transitions.
 - Four compact sensors for automations: live events, scheduled events, competitions, and source errors.
 - Automatic recovery, request caching, bounded concurrency, and explicit unavailable/stale data states.
@@ -39,7 +43,7 @@ This is a custom repository; inclusion in the default marketplace catalog is not
 
 ### Manual installation
 
-Download the `ha-sports-hub-0.2.0.zip` release asset and extract it into your HA configuration directory. The resulting path must be:
+Download the `ha-sports-hub-0.3.0.zip` release asset and extract it into your HA configuration directory. The resulting path must be:
 
 ```text
 config/custom_components/sports_hub/manifest.json
@@ -55,17 +59,46 @@ The first pass loads the neighboring match days; the remaining schedule fills in
 
 The default window covers **2 previous days and 7 upcoming days**. It can be changed to 1–7 previous days and 1–14 upcoming days. Search and favorites operate within this loaded window.
 
-If an existing Formula 1 dashboard is present at `dashboard-f1`, F1 event details offer a shortcut to it.
+Personal and shared dashboards fetch additional season information independently of that short overview window. A Bundesliga league dossier can therefore include all 306 published season matches, while the main hub stays fast. Search discovery still uses the overview data.
 
 ## Personal team and league dashboards
 
 Search for a team (for example, **FC Bayern**) or mark a team/league as a favorite. Sports Hub prepares a preview with its logo and available provider colors. Review the name and colors, then select **Approve dashboard**. Choosing **Later** keeps the favorite without creating a dashboard. Pending suggestions are available under **Dashboards**.
 
-Approved dashboards live under **Sports Hub → Dashboards**, are stored on the HA server for your signed-in user, and follow you across browsers/devices. They include an overview, live events, schedule, and results across the loaded competitions. The preview does not imply a complete season archive or standings.
+Approved dashboards live under **Sports Hub → Dashboards**, are stored on the HA server for your signed-in user, and follow you across browsers/devices. They load a richer dossier on demand: published season fixtures and results across competitions, full standings, form from the last five matches, league/cup progress, season totals and home/away splits, squad, home venue, and news. Availability varies by sport and provider. Existing approved dashboards automatically receive the richer layout after updating; no new approval is needed.
 
 Administrators can also check **Also show in the Home Assistant sidebar** before approval. This creates a separate, automatically managed Sports Hub panel with its own URL and sidebar entry. **Shared sidebar dashboards are visible to all HA users**; the approval dialog explains this. They are custom panels, not editable Lovelace/YAML dashboards. Removing a personal dashboard leaves a published sidebar panel intact; administrators can remove that separately under **Dashboards**.
 
 Logos and team colors come from the provider when available; supported league palettes have curated defaults. Missing metadata uses a neutral fallback and all colors remain editable. Team and competition names follow the data source. The interface, dates, setup forms, and sensor names support **English, German, Spanish, French, Italian, and Dutch**. Additional languages can be added in `frontend/i18n.js` and `translations/`.
+
+## Match center
+
+Open **Details** on a team-sport match to see its Overview, Timeline, Lineups, Match Statistics and Player Statistics. Soccer displays published formations, starting XI, bench, goals, cards, substitutions and other key events. Supported ESPN team-sport summaries also expose basketball/hockey play-by-play, NFL drive events and sport-specific player box scores when available. Tennis, MMA and leaderboard sports retain their event details rather than borrowing a different contest's summary.
+
+The open view checks for updates every 30 seconds, with 30-second server caching for live/near-start matches and 15-minute caching otherwise. It preserves the selected tab and scroll position. Spoiler protection covers the entire match center until the user reveals that match. A failed refresh retains cached facts with a stale label.
+
+Only structured event facts are assembled into the timeline; article bodies, editorial commentary and betting odds are not republished. The source's coverage can be partial, and the latest 200 available events are displayed newest-first. Before kickoff, lineups can be unpublished; any provider season totals are clearly labelled as a **pre-match season comparison**, never live match statistics. Detailed statistical labels without a local translation retain the source's label.
+
+## Formula 1
+
+Approve **Formula 1** as a league dashboard to get dedicated Overview, Live, Championship, Schedule, Results, Race Control, Strategy and News tabs.
+
+- **Without additional integrations:** [Jolpica](https://api.jolpi.ca/ergast/) supplies the published season calendar, session times, driver/constructor standings and latest race classification. News comes through the same localized news adapter as other dossiers.
+- **With [F1 Sensor](https://nicxe.github.io/f1_sensor/) installed:** Sports Hub discovers the loaded entry and uses its bundled modular cards. Enable F1 Sensor's dashboard cards in its options. No entry IDs or entity names need to be copied manually. If several F1 Sensor entries are loaded, the first loaded entry is used.
+- The live views include timing, map, weather, Race Control, tyres, results/grid, championship progression, FIA documents and investigations. The Strategy tab embeds **Circle of Doom** when the driver-position entity is available. Existing F1 Sensor and Circle of Doom installations are reused. Circle of Doom intentionally retains its English interface.
+- Public timing does not require F1TV. **Live car positions, team radio and detailed pit-stop data are not guaranteed without the additional authorized access required by F1 Sensor.** Sports Hub does not provide or bypass that access. No synthetic car positions or race-control messages are generated.
+- Live modules reflect F1 Sensor's session/availability state. No active session means no new live telemetry. Jolpica data remains available in a separate expandable section even when the F1 Sensor cards fail to load.
+- An existing dashboard at `dashboard-f1` is linked directly. Household-specific lights and automations are not copied into the public integration.
+
+## Rich data sources and freshness
+
+Dossiers load only when an **approved** dashboard is opened. ESPN team schedules cover the provider's published season; soccer uses the all-competitions team schedule, so cup and international fixtures are included when published. League schedules use the provider's season boundaries, including New Year, and bounded monthly requests. Unsigned future rounds, opponents and kickoff times remain unknown; cup progression is shown as published rounds/fixtures, not an invented tournament bracket.
+
+Standings retain conference/group structure. Some competitions or sports have no comparable team table, squad or venue data. Those sections explicitly show that data is unavailable. Team names, round descriptions and roster metadata retain the provider's language. Six-language interface labels do not translate third-party articles or official Race Control messages.
+
+News uses Google News RSS search for the selected club/league in the HA interface language, with an ESPN fallback. Only headlines, publisher, timestamp and article links are displayed, never republished article bodies. News relevance, access restrictions and original language depend on the publisher. ESPN fallback articles may be older; publication dates are always displayed.
+
+Additional requests share a cache and four-request concurrency limit. Typical cache intervals: results/standings/news 15 minutes; team fixtures 30 minutes; club metadata and F1 season data one hour; squads and distant league months six hours. Current-month league schedules use 15 minutes. Live score updates still come from the main scoreboard polling. Sources and retrieval times appear at the bottom of each dossier; cached data remains visible and is labelled stale when refresh fails.
 
 ## Coverage
 
@@ -81,7 +114,7 @@ Scores are fetched by your HA server over HTTPS. Live and near-start events are 
 
 Scores remain cached during failures and receive a stale-data label. A score older than two minutes is not shown as live. Delayed, suspended, postponed and cancelled events are not reported as live either. Missing scores stay blank instead of becoming `0:0`.
 
-Full scoreboards are kept in memory and sent to the authenticated dashboard over HA's WebSocket connection. They are not written as large recorder attributes. Favorite and spoiler settings use local browser storage; they do not currently sync across devices. Approved dashboard definitions are stored separately in HA and scoped to the authenticated user; sidebar definitions are shared after administrator approval. Team logos are loaded from provider URLs by the browser. There is no analytics or tracking added by this project.
+Full scoreboards are kept in memory and sent to the authenticated dashboard over HA's WebSocket connection. They are not written as large recorder attributes. Favorite and spoiler settings use local browser storage; they do not currently sync across devices. Approved dashboard definitions are stored separately in HA and scoped to the authenticated user; sidebar definitions are shared after administrator approval. Team logos and player headshots are loaded from provider URLs by the browser. Opening a dossier sends its club/league name and selected news language to Google News or ESPN from the HA server; it does not send HA user IDs, credentials or dashboard settings. F1 season requests go to Jolpica. Opening an article connects your browser to the publisher or Google News. There is no analytics added by this project.
 
 ESPN and competition/team names and logos belong to their respective owners. Sports Hub is an independent community project, not affiliated with ESPN or any sports league.
 
@@ -104,4 +137,4 @@ For an offline UI preview, serve this repository using `python3 -m http.server 8
 
 If Sports Hub is useful to you, you can [support development via PayPal](https://paypal.me/maikeltimo).
 
-MIT licensed. Issues and pull requests are welcome.
+MIT licensed. The bundled `frontend/vendor/f1-circle-of-doom-card.js` is version 0.2.1 from [ha-f1-circle-of-doom-card](https://github.com/maikelfuhrmann/ha-f1-circle-of-doom-card), also MIT licensed; its license is included alongside the file. F1 Sensor cards are loaded from the user’s installed integration and are not redistributed. Issues and pull requests are welcome.

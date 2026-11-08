@@ -10,3 +10,5 @@ build/
 docs/live-data.json
 tests/fixtures/live/
 dev-config/
+docs/rich-data.json
+docs/match-data.json
