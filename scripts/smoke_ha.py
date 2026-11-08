@@ -4,6 +4,7 @@ Uses a temporary config and mock upstream scoreboards; never connects to a user'
 """
 import asyncio
 import json
+import logging
 from pathlib import Path
 import sys
 import tempfile
@@ -19,6 +20,7 @@ from homeassistant.components import frontend
 from homeassistant.runner import configure_event_loop
 
 async def main():
+    logging.basicConfig(level=logging.INFO)
     configure_event_loop(asyncio.get_running_loop())
     with tempfile.TemporaryDirectory(prefix='sports-hub-ha-') as directory:
         (Path(directory)/'custom_components').symlink_to(ROOT/'custom_components',target_is_directory=True)
