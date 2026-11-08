@@ -26,8 +26,8 @@ Requires **Home Assistant 2026.11.0 or newer**.
 
 ### Marketplace / HACS custom repository
 
-1. Open Marketplace (or HACS on supported installations) and its **Custom repositories** menu.
-2. Add `https://github.com/maikelfuhrmann/ha-sports-hub`, category **Integration**.
+1. Open Marketplace and choose **Add via link** (German: **Über Link hinzufügen**). In HACS, use **Custom repositories** instead.
+2. Add `https://github.com/maikelfuhrmann/ha-sports-hub`. Marketplace detects the integration automatically; in HACS, choose category **Integration**.
 3. Download **Sports Hub** and restart Home Assistant.
 4. Go to **Settings → Devices & services → Add integration → Sports Hub**.
 5. Keep all competitions or choose a subset, then submit.
