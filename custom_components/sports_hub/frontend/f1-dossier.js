@@ -92,7 +92,7 @@ export const f1DossierMethods={
         const slot=this.shadowRoot.querySelector(`[data-f1-slot="${id}"]`);if(!slot)continue;
         try{
           const circle=id==='circle',startingGrid=['starting-grid','qualifying'].includes(id),entities=bridge?.entities||{};
-          const config=startingGrid?{entry_id:bridge?.cards_enabled?bridge.entry_id:null,compact:this.view==='home',mode:id==='qualifying'?'qualifying':'grid',weekend:data?.f1?.weekend}:circle?{type:'custom:f1-circle-of-doom-card',title:'Circle of Doom',entity:entities.driver_positions,session_entity:entities.current_session,session_status_entity:entities.session_status,track_status_entity:entities.track_status,uncertainty:2,stale_after:90}:f1CardConfig(spec.title,spec.modules,bridge.entry_id,spec.live);
+          const config=startingGrid?{entry_id:bridge?.cards_enabled?bridge.entry_id:null,compact:this.view==='home',driver_list_entity:entities.driver_list,mode:id==='qualifying'?'qualifying':'grid',weekend:data?.f1?.weekend}:circle?{type:'custom:f1-circle-of-doom-card',title:'Circle of Doom',entity:entities.driver_positions,session_entity:entities.current_session,session_status_entity:entities.session_status,track_status_entity:entities.track_status,uncertainty:2,stale_after:90}:f1CardConfig(spec.title,spec.modules,bridge.entry_id,spec.live);
           const signature=JSON.stringify(config),old=this._nativeCards.get(id);
           const card=old?.signature===signature?old.card:document.createElement(startingGrid?'sports-hub-starting-grid':circle?'f1-circle-of-doom-card':'f1-sensor-card');
           if(card!==old?.card)card.setConfig(config);

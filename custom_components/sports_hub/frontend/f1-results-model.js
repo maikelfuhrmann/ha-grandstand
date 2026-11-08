@@ -22,11 +22,28 @@ const f1Portraits2026={
  carlossainz:['williams','carsai01'],alexanderalbon:['williams','alealb01'],fernandoalonso:['astonmartin','feralo01'],lancestroll:['astonmartin','lanstr01'],
  sergioperez:['cadillac','serper01'],valtteribottas:['cadillac','valbot01'],
 };
-export function f1DriverAsset(name,season){
+function f1PersonKey(name){
  let key=String(name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z]/g,'');
  key=({andreakimiantonelli:'kimiantonelli',alexalbon:'alexanderalbon',nicohuelkenberg:'nicohulkenberg'})[key]||key;
+ return key;
+}
+export function f1DriverAsset(name,season){
+ const key=f1PersonKey(name);
  const item=String(season)==='2026'?f1Portraits2026[key]:null;
  return item?{url:`https://media.formula1.com/image/upload/c_lfill,w_440/q_auto/d_common:f1:2026:fallback:driver:2026fallbackdriverright.webp/v1740000001/common/f1/2026/${item[0]}/${item[1]}/2026${item[0]}${item[1]}right.webp`}:null;
+}
+// Prefer the live feed's actual headshot. Require person + season + official
+// media host; racing numbers and an older season are not identity matches.
+export function f1HeadshotAsset(name,season,drivers){
+ const match=Array.isArray(drivers)?drivers.find(d=>d?.name&&f1PersonKey(d.name)===f1PersonKey(name)):null;
+ for(const value of [match?.headshot_large,match?.headshot_small]){
+  try{
+   const url=new URL(value);
+   if(url.protocol==='https:'&&url.hostname==='media.formula1.com'&&/^\d{4}$/.test(String(season))&&url.pathname.includes('/'+season+'/'))return {url:url.href,cropped:false};
+  }catch{}
+ }
+ const asset=f1DriverAsset(name,season);
+ return asset?{...asset,cropped:true}:null;
 }
 export function f1WeekendModel(resource,weekend={},native=false,now=Date.now()){
  const model=startingGridModel(resource),packet=resource?.data;

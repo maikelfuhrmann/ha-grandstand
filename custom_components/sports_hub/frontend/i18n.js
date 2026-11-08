@@ -23,3 +23,10 @@ Object.assign(words.es,{"gridVisual": "Vista de parrilla", "gridVehicles": "Coch
 Object.assign(words.fr,{"gridVisual": "Affichage de la grille", "gridVehicles": "Voitures", "gridPeople": "Pilotes", "driverPortraits": "Portraits : Formula1.com. Les droits appartiennent à leurs titulaires. Une silhouette neutre remplace les images manquantes."});
 Object.assign(words.it,{"gridVisual": "Vista griglia", "gridVehicles": "Vetture", "gridPeople": "Piloti", "driverPortraits": "Ritratti: Formula1.com. I diritti restano ai rispettivi titolari. Le immagini mancanti usano una sagoma neutra."});
 Object.assign(words.nl,{"gridVisual": "Gridweergave", "gridVehicles": "Auto’s", "gridPeople": "Coureurs", "driverPortraits": "Portretten: Formula1.com. De rechten blijven bij de rechthebbenden. Ontbrekende foto’s krijgen een neutraal silhouet."});
+
+Object.assign(words.en,{"gridHeadshots": "Portrait", "gridFullBody": "Full body", "gridHeadshotNote": "Headshots when available; otherwise a close crop of the official driver photo."});
+Object.assign(words.de,{"gridHeadshots": "Porträt", "gridFullBody": "Ganzkörper", "gridHeadshotNote": "Kopfporträt, sofern verfügbar; sonst ein vergrößerter Ausschnitt des offiziellen Fahrerfotos."});
+Object.assign(words.es,{"gridHeadshots": "Retrato", "gridFullBody": "Cuerpo entero", "gridHeadshotNote": "Foto de rostro si está disponible; en su defecto, un recorte ampliado de la foto oficial."});
+Object.assign(words.fr,{"gridHeadshots": "Portrait", "gridFullBody": "En pied", "gridHeadshotNote": "Photo du visage si disponible ; sinon, un cadrage rapproché de la photo officielle."});
+Object.assign(words.it,{"gridHeadshots": "Ritratto", "gridFullBody": "Figura intera", "gridHeadshotNote": "Foto del volto se disponibile; altrimenti un ritaglio ingrandito della foto ufficiale."});
+Object.assign(words.nl,{"gridHeadshots": "Portret", "gridFullBody": "Volledig", "gridHeadshotNote": "Gezichtsportret indien beschikbaar; anders een close-up van de officiële coureursfoto."});
