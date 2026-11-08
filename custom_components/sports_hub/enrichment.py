@@ -11,6 +11,7 @@ from .catalog import LEAGUES
 from .const import API_ROOT, VERSION
 from .enrichment_model import normalize_table, normalize_schedule, normalize_team, normalize_roster, normalize_news_xml, normalize_news_espn, normalize_f1
 from .model import parse_time
+from .f1_results import parse_result_page, result_root, result_rows, select_weekend, jolpica_qualifying, F1_SITE
 
 LANGUAGES={'de':('DE','de'),'en':('US','en'),'es':('ES','es'),'fr':('FR','fr'),'it':('IT','it'),'nl':('NL','nl')}
 
@@ -19,7 +20,7 @@ class EnrichmentProvider:
     def __init__(self,session):
         self.session=session;self.cache={};self.pending={};self.semaphore=asyncio.Semaphore(4)
 
-    async def get(self,url,ttl=900,xml=False):
+    async def get(self,url,ttl=900,xml=False,html=False):
         now=datetime.now(timezone.utc);cached=self.cache.get(url)
         if cached and cached['expires']>now:return cached
         if url in self.pending:return await asyncio.shield(self.pending[url])
@@ -34,7 +35,7 @@ class EnrichmentProvider:
                             raw.extend(chunk)
                             if len(raw)>4_000_000:raise ValueError('Response too large')
                         import json
-                        data=normalize_news_xml(raw,now) if xml else json.loads(raw)
+                        data=normalize_news_xml(raw,now) if xml else parse_result_page(raw) if html else json.loads(raw)
                         if not isinstance(data,list if xml else dict):raise ValueError('Unexpected response')
                 item={'data':data,'updated_at':now.isoformat(),'error':False,'expires':now+timedelta(seconds=ttl)}
             except (aiohttp.ClientError,asyncio.TimeoutError,ValueError,TypeError,ParseError):
@@ -153,5 +154,27 @@ class EnrichmentProvider:
     async def f1(self,profile,lang):
         base='https://api.jolpi.ca/ergast/f1/current'
         items=await asyncio.gather(*(self.get(base+path,3600) for path in ['.json?limit=100','/driverStandings.json?limit=100','/constructorStandings.json?limit=100','/last/results.json?limit=100']))
-        data=normalize_f1(*(i['data'] for i in items));news=await self.news('Formula 1',lang,LEAGUES['racing:f1'])
-        return {'key':profile['key'],'kind':'f1','f1':data,'events':[],'news':news,'sources':[{'name':'Jolpica · '+label,'updated_at':i['updated_at'],'stale':i['error']} for label,i in zip(['Calendar','Drivers','Constructors','Results'],items)],'generated_at':datetime.now(timezone.utc).isoformat()}
+        data=normalize_f1(*(i['data'] for i in items))
+        weekend,news=await asyncio.gather(self.f1_weekend(data),self.news('Formula 1',lang,LEAGUES['racing:f1']))
+        data['weekend']=weekend
+        return {'key':profile['key'],'kind':'f1','f1':data,'events':[],'news':news,'sources':[{'name':'Jolpica · '+label,'updated_at':i['updated_at'],'stale':i['error']} for label,i in zip(['Calendar','Drivers','Constructors','Results'],items)]+weekend.get('sources',[]),'generated_at':datetime.now(timezone.utc).isoformat()}
+
+    async def f1_weekend(self,data):
+        race=select_weekend(data['calendar']);season=data['season']
+        if not race or not re.fullmatch(r'20\d{2}',season) or not str(race['round']).isdigit():return {}
+        result={'season':season,'round':str(race['round']),'meeting':race['name'],'race_date':race['date'],
+                'qualifying_date':next((s['date'] for s in race['sessions'] if s['name']=='Qualifying'),''),'sources':[]}
+        index,fallback=await asyncio.gather(self.get(f'{F1_SITE}/en/results/{season}/races',3600,html=True),
+            self.get(f"https://api.jolpi.ca/ergast/f1/{season}/{race['round']}/qualifying.json?limit=100",300))
+        root=result_root(index['data'],season,race.get('circuit_id'))
+        pages=await asyncio.gather(*(self.get(root+'/'+kind,300,html=True) for kind in ('qualifying','starting-grid'))) if root else []
+        for kind,page in zip(('qualifying','grid'),pages):
+            rows=result_rows(page['data'],'qualifying' if kind=='qualifying' else 'grid')
+            result[kind]={'rows':rows,'source':'Formula1.com','url':root+('/qualifying' if kind=='qualifying' else '/starting-grid'),
+                          'updated_at':page['updated_at'],'stale':page['error'],'notes':page['data'].get('notes',[])}
+            result['sources'].append({'name':'Formula1.com · '+kind,'updated_at':page['updated_at'],'stale':page['error']})
+        if not result.get('qualifying',{}).get('rows'):
+            result['qualifying']={'rows':jolpica_qualifying(fallback['data'],season,race['round']),'source':'Jolpica',
+                                  'updated_at':fallback['updated_at'],'stale':fallback['error'],'notes':[]}
+            result['sources'].append({'name':'Jolpica · Qualifying','updated_at':fallback['updated_at'],'stale':fallback['error']})
+        return result

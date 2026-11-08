@@ -115,7 +115,7 @@ def normalize_f1(calendar, drivers, constructors, results):
             if s and s.get('date'):sessions.append({'name':label,'date':s['date']+'T'+s.get('time','00:00:00Z'),'time_confirmed':bool(s.get('time'))})
         sessions.append({'name':'Race','date':r['date']+'T'+r.get('time','00:00:00Z'),'time_confirmed':bool(r.get('time'))})
         c=r.get('Circuit') or {};location=c.get('Location') or {}
-        races.append({'round':r.get('round'),'name':text(r.get('raceName')),'date':sessions[-1]['date'],'sessions':sorted(sessions,key=lambda x:x['date']),'circuit':text(c.get('circuitName')),'locality':text(location.get('locality')),'country':text(location.get('country')),'url':safe_url(r.get('url'))})
+        races.append({'round':r.get('round'),'name':text(r.get('raceName')),'date':sessions[-1]['date'],'sessions':sorted(sessions,key=lambda x:x['date']),'circuit_id':text(c.get('circuitId')),'circuit':text(c.get('circuitName')),'locality':text(location.get('locality')),'country':text(location.get('country')),'url':safe_url(r.get('url'))})
     ds=[];cs=[]
     for table in mr(drivers,'StandingsTable').get('StandingsLists',[]):
         for row in table.get('DriverStandings',[]):
