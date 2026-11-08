@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, Mock
 
 from custom_components.sports_hub.catalog import LEAGUES
 from custom_components.sports_hub.enrichment import EnrichmentProvider
-from custom_components.sports_hub.enrichment_model import normalize_schedule, normalize_table, normalize_roster, normalize_news_xml, normalize_f1, numeric
+from custom_components.sports_hub.enrichment_model import normalize_schedule, normalize_table, normalize_roster, normalize_news_xml, normalize_f1, numeric, infer_home_venue
 from custom_components.sports_hub.context import websocket_context, CONTEXT_KEY
 from custom_components.sports_hub.dashboards import DATA_KEY
 
@@ -20,6 +20,32 @@ def fixture(id='1',league='ger.dfb_pokal',year=2026):
     return {'id':id,'date':f'{year}-12-02T19:45Z','name':'Away at Home','season':{'year':year},'league':{'slug':league,'name':'Cup','isTournament':True},'seasonType':{'id':'4','name':'Round of 16'},'competitions':[{'id':id,'date':f'{year}-12-02T19:45Z','status':{'type':{'state':'pre','name':'STATUS_SCHEDULED'}},'competitors':[{'homeAway':'home','team':{'id':'125','displayName':'Home'}},{'homeAway':'away','team':{'id':'124','displayName':'Away'}}]}]}
 
 class EnrichmentModels(unittest.TestCase):
+    def home_fixture(self, name='Allianz Arena', date='2026-10-31T17:30Z', league='ger.1', neutral=False, state='post', home=True):
+        raw=fixture(league=league);raw['date']=date
+        comp=raw['competitions'][0];comp['date']=date;comp['neutralSite']=neutral
+        comp['status']={'type':{'state':state,'name':'STATUS_FINAL' if state=='post' else 'STATUS_SCHEDULED'}}
+        comp['venue']={'fullName':name,'address':{'city':'München','country':'Germany'}}
+        if not home:comp['competitors'][0]['homeAway']='away'
+        return normalize_schedule({'events':[raw]},LEAGUE,'125')[0]
+    def test_home_stadium_excludes_friendly_tour_even_when_marked_home(self):
+        tour=self.home_fixture('Kai Tak Sports Park','2026-08-07T12:00Z','club.friendly')
+        home=self.home_fixture()
+        venue=infer_home_venue([tour,home],'125',LEAGUE['id'],datetime(2026,11,8,tzinfo=timezone.utc))
+        self.assertEqual(venue['name'],'Allianz Arena');self.assertEqual(venue['city'],'München')
+        self.assertIsNone(infer_home_venue([tour],'125',LEAGUE['id']))
+    def test_neutral_unknown_and_away_venues_do_not_become_home_stadium(self):
+        rows=[self.home_fixture(neutral=True),self.home_fixture(neutral=None),self.home_fixture(home=False),self.home_fixture(league='ger.dfb_pokal')]
+        self.assertIsNone(infer_home_venue(rows,'125',LEAGUE['id']))
+        self.assertTrue(rows[0]['neutral_site']);self.assertIsNone(rows[1]['neutral_site'])
+    def test_recent_actual_home_venue_precedes_old_and_future_venues(self):
+        old=self.home_fixture('Old stadium','2026-08-01T12:00Z')
+        current=self.home_fixture()
+        future=self.home_fixture('Future stadium','2026-12-01T12:00Z',state='pre')
+        self.assertEqual(infer_home_venue([future,old,current],'125',LEAGUE['id'],datetime(2026,11,8,tzinfo=timezone.utc))['name'],'Allianz Arena')
+    def test_next_regular_home_fixture_is_fallback_before_season_starts(self):
+        near=self.home_fixture('Next stadium','2026-11-20T12:00Z',state='pre')
+        later=self.home_fixture('Later stadium','2026-12-01T12:00Z',state='pre')
+        self.assertEqual(infer_home_venue([later,near],'125',LEAGUE['id'],datetime(2026,11,8,tzinfo=timezone.utc))['name'],'Next stadium')
     def test_cross_competition_fixture_has_correct_league_and_round(self):
         events=normalize_schedule({'events':[fixture()]},LEAGUE,'125')
         self.assertEqual(len(events),1);self.assertEqual(events[0]['league_id'],'soccer:ger.dfb_pokal')
@@ -56,6 +82,24 @@ class FakeSession:
     def get(self,url,**kwargs):self.calls.append(url);return FakeResponse(self)
 
 class EnrichmentProviderTests(unittest.IsolatedAsyncioTestCase):
+    async def test_club_home_venue_and_away_event_radar_stay_separate(self):
+        home=fixture('home',league='ger.1');home['date']='2026-10-31T17:30Z'
+        c=home['competitions'][0];c.update({'date':home['date'],'neutralSite':False,'status':{'type':{'state':'post'}},'venue':{'fullName':'Allianz Arena','address':{'city':'München','country':'Germany'}}})
+        tour=fixture('tour',league='club.friendly');tour['date']='2026-08-07T12:00Z'
+        tour['competitions'][0].update({'date':tour['date'],'neutralSite':False,'status':{'type':{'state':'post'}},'venue':{'fullName':'Kai Tak Sports Park'}})
+        away=fixture('away',league='ger.1');away['date']=(NOW+timedelta(days=1)).isoformat()
+        c=away['competitions'][0];c.update({'date':away['date'],'neutralSite':False,'venue':{'fullName':'Away stadium','address':{'city':'Away city','country':'Germany'},'coordinates':{'latitude':50,'longitude':8}}});c['competitors'][0]['homeAway']='away'
+        p=EnrichmentProvider(None)
+        async def get(url,*args):
+            if '/schedule?' in url:return item({'events':[away]})
+            if '/schedule' in url:return item({'events':[tour,home]})
+            if '/roster' in url:return item({})
+            if '/teams/125' in url:return item({'team':{'id':'125','defaultLeague':{'slug':'ger.1'}}})
+            return item({})
+        p.get=AsyncMock(side_effect=get);p.news=AsyncMock(return_value={'articles':[]})
+        data=await p.context(PROFILE,{})
+        self.assertEqual(data['team']['venue'],'Allianz Arena');self.assertEqual(data['team']['city'],'München')
+        self.assertEqual(data['radar']['location']['name'],'Away stadium')
     async def test_parallel_calls_deduplicate_and_failures_keep_old_data(self):
         s=FakeSession();p=EnrichmentProvider(s)
         a,b=await asyncio.gather(p.get('https://example.com'),p.get('https://example.com'))
