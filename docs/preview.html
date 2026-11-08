@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sports Hub · Preview</title>
+<style>html,body{height:100%;margin:0;background:#0b1017}sports-hub-panel{height:100vh}</style>
+<sports-hub-panel></sports-hub-panel>
+<script type="module">
+await import('../custom_components/sports_hub/frontend/sports-hub.js?preview='+Date.now());
+const panel=document.querySelector('sports-hub-panel');
+const params=new URLSearchParams(location.search);
+let response=await fetch(params.has('live')?'./live-data.json':'./demo-data.json');
+const data=await response.json();
+panel.panel={config:{entry_id:'preview',version:'0.1.0',preview:true,preview_now:data.generated_at}};
+panel.hass={language:params.get('lang')||'de',config:{time_zone:data.time_zone},user:{id:'preview',is_admin:false},panels:{},callWS:async()=>data};
+</script></html>

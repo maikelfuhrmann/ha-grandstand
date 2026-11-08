@@ -1,0 +1,426 @@
+{
+  "checked_on": "2026-11-08",
+  "note": "Endpoint validation; an empty scoreboard does not prove complete event coverage.",
+  "leagues": [
+    {
+      "id": "soccer:ger.1",
+      "name": "Bundesliga",
+      "ok": true,
+      "events": 3,
+      "reported_name": "German Bundesliga"
+    },
+    {
+      "id": "soccer:ger.2",
+      "name": "2. Bundesliga",
+      "ok": true,
+      "events": 3,
+      "reported_name": "German 2. Bundesliga"
+    },
+    {
+      "id": "soccer:ger.dfb_pokal",
+      "name": "DFB-Pokal",
+      "ok": true,
+      "events": 0,
+      "reported_name": "German Cup"
+    },
+    {
+      "id": "soccer:eng.1",
+      "name": "Premier League",
+      "ok": true,
+      "events": 5,
+      "reported_name": "English Premier League"
+    },
+    {
+      "id": "soccer:eng.2",
+      "name": "Championship",
+      "ok": true,
+      "events": 0,
+      "reported_name": "English League Championship"
+    },
+    {
+      "id": "soccer:eng.fa",
+      "name": "FA Cup",
+      "ok": true,
+      "events": 4,
+      "reported_name": "English FA Cup"
+    },
+    {
+      "id": "soccer:eng.league_cup",
+      "name": "EFL Cup",
+      "ok": true,
+      "events": 0,
+      "reported_name": "English Carabao Cup"
+    },
+    {
+      "id": "soccer:esp.1",
+      "name": "LaLiga",
+      "ok": true,
+      "events": 5,
+      "reported_name": "Spanish LALIGA"
+    },
+    {
+      "id": "soccer:esp.copa_del_rey",
+      "name": "Copa del Rey",
+      "ok": true,
+      "events": 0,
+      "reported_name": "Spanish Copa del Rey"
+    },
+    {
+      "id": "soccer:ita.1",
+      "name": "Serie A",
+      "ok": true,
+      "events": 5,
+      "reported_name": "Italian Serie A"
+    },
+    {
+      "id": "soccer:ita.coppa_italia",
+      "name": "Coppa Italia",
+      "ok": true,
+      "events": 0,
+      "reported_name": "Coppa Italia"
+    },
+    {
+      "id": "soccer:fra.1",
+      "name": "Ligue 1",
+      "ok": true,
+      "events": 6,
+      "reported_name": "French Ligue 1"
+    },
+    {
+      "id": "soccer:fra.coupe_de_france",
+      "name": "Coupe de France",
+      "ok": true,
+      "events": 0,
+      "reported_name": "Coupe de France"
+    },
+    {
+      "id": "soccer:ned.1",
+      "name": "Eredivisie",
+      "ok": true,
+      "events": 5,
+      "reported_name": "Dutch Eredivisie"
+    },
+    {
+      "id": "soccer:por.1",
+      "name": "Primeira Liga",
+      "ok": true,
+      "events": 6,
+      "reported_name": "Portuguese Primeira Liga"
+    },
+    {
+      "id": "soccer:bel.1",
+      "name": "Belgian Pro League",
+      "ok": true,
+      "events": 4,
+      "reported_name": "Belgian Pro League"
+    },
+    {
+      "id": "soccer:aut.1",
+      "name": "Austrian Bundesliga",
+      "ok": true,
+      "events": 3,
+      "reported_name": "Austrian Bundesliga"
+    },
+    {
+      "id": "soccer:sco.1",
+      "name": "Scottish Premiership",
+      "ok": true,
+      "events": 2,
+      "reported_name": "Scottish Premiership"
+    },
+    {
+      "id": "soccer:tur.1",
+      "name": "S\u00fcper Lig",
+      "ok": true,
+      "events": 4,
+      "reported_name": "Turkish Super Lig"
+    },
+    {
+      "id": "soccer:uefa.champions",
+      "name": "Champions League",
+      "ok": true,
+      "events": 0,
+      "reported_name": "UEFA Champions League"
+    },
+    {
+      "id": "soccer:uefa.europa",
+      "name": "Europa League",
+      "ok": true,
+      "events": 0,
+      "reported_name": "UEFA Europa League"
+    },
+    {
+      "id": "soccer:uefa.europa.conf",
+      "name": "Conference League",
+      "ok": true,
+      "events": 0,
+      "reported_name": "UEFA Conference League"
+    },
+    {
+      "id": "soccer:uefa.nations",
+      "name": "Nations League",
+      "ok": true,
+      "events": 0,
+      "reported_name": "UEFA Nations League"
+    },
+    {
+      "id": "soccer:uefa.euro",
+      "name": "EURO",
+      "ok": true,
+      "events": 0,
+      "reported_name": "UEFA European Championship"
+    },
+    {
+      "id": "soccer:fifa.world",
+      "name": "FIFA World Cup",
+      "ok": true,
+      "events": 0,
+      "reported_name": "FIFA World Cup"
+    },
+    {
+      "id": "soccer:fifa.wwc",
+      "name": "FIFA Women's World Cup",
+      "ok": true,
+      "events": 0,
+      "reported_name": "FIFA Women's World Cup"
+    },
+    {
+      "id": "soccer:fifa.worldq.uefa",
+      "name": "European World Cup Qualifiers",
+      "ok": true,
+      "events": 0,
+      "reported_name": "FIFA World Cup Qualifying - UEFA"
+    },
+    {
+      "id": "soccer:eng.w.1",
+      "name": "Women's Super League",
+      "ok": true,
+      "events": 5,
+      "reported_name": "English Women's Super League"
+    },
+    {
+      "id": "soccer:esp.w.1",
+      "name": "Liga F",
+      "ok": true,
+      "events": 3,
+      "reported_name": "Spanish Liga F"
+    },
+    {
+      "id": "soccer:uefa.wchampions",
+      "name": "Women's Champions League",
+      "ok": true,
+      "events": 0,
+      "reported_name": "UEFA Women's Champions League"
+    },
+    {
+      "id": "soccer:usa.1",
+      "name": "MLS",
+      "ok": true,
+      "events": 0,
+      "reported_name": "MLS"
+    },
+    {
+      "id": "soccer:usa.nwsl",
+      "name": "NWSL",
+      "ok": true,
+      "events": 2,
+      "reported_name": "NWSL"
+    },
+    {
+      "id": "soccer:conmebol.libertadores",
+      "name": "Copa Libertadores",
+      "ok": true,
+      "events": 0,
+      "reported_name": "CONMEBOL Libertadores"
+    },
+    {
+      "id": "soccer:bra.1",
+      "name": "Brasileir\u00e3o",
+      "ok": true,
+      "events": 0,
+      "reported_name": "Brazilian Serie A"
+    },
+    {
+      "id": "soccer:arg.1",
+      "name": "Argentine Primera Divisi\u00f3n",
+      "ok": true,
+      "events": 1,
+      "reported_name": "Argentine Liga Profesional de F\u00fatbol"
+    },
+    {
+      "id": "soccer:mex.1",
+      "name": "Liga MX",
+      "ok": true,
+      "events": 2,
+      "reported_name": "Mexican Liga BBVA MX"
+    },
+    {
+      "id": "soccer:jpn.1",
+      "name": "J1 League",
+      "ok": true,
+      "events": 4,
+      "reported_name": "Japanese J.League"
+    },
+    {
+      "id": "soccer:ksa.1",
+      "name": "Saudi Pro League",
+      "ok": true,
+      "events": 0,
+      "reported_name": "Saudi Pro League"
+    },
+    {
+      "id": "basketball:nba",
+      "name": "NBA",
+      "ok": true,
+      "events": 7,
+      "reported_name": "National Basketball Association"
+    },
+    {
+      "id": "basketball:wnba",
+      "name": "WNBA",
+      "ok": true,
+      "events": 0,
+      "reported_name": "Women's National Basketball Association"
+    },
+    {
+      "id": "basketball:mens-college-basketball",
+      "name": "NCAA Men's Basketball",
+      "ok": true,
+      "events": 36,
+      "reported_name": "NCAA Men's Basketball"
+    },
+    {
+      "id": "basketball:womens-college-basketball",
+      "name": "NCAA Women's Basketball",
+      "ok": true,
+      "events": 68,
+      "reported_name": "NCAA Women's Basketball"
+    },
+    {
+      "id": "basketball:nbl",
+      "name": "NBL",
+      "ok": true,
+      "events": 1,
+      "reported_name": "National Basketball League"
+    },
+    {
+      "id": "football:nfl",
+      "name": "NFL",
+      "ok": true,
+      "events": 13,
+      "reported_name": "National Football League"
+    },
+    {
+      "id": "football:college-football",
+      "name": "NCAA Football",
+      "ok": true,
+      "events": 0,
+      "reported_name": "NCAA - Football"
+    },
+    {
+      "id": "hockey:nhl",
+      "name": "NHL",
+      "ok": true,
+      "events": 6,
+      "reported_name": "National Hockey League"
+    },
+    {
+      "id": "baseball:mlb",
+      "name": "MLB",
+      "ok": true,
+      "events": 0,
+      "reported_name": "Major League Baseball"
+    },
+    {
+      "id": "tennis:atp",
+      "name": "ATP Tour",
+      "ok": true,
+      "events": 2,
+      "reported_name": "ATP"
+    },
+    {
+      "id": "tennis:wta",
+      "name": "WTA Tour",
+      "ok": true,
+      "events": 7,
+      "reported_name": "WTA"
+    },
+    {
+      "id": "racing:f1",
+      "name": "Formula 1",
+      "ok": true,
+      "events": 1,
+      "reported_name": "Formula 1"
+    },
+    {
+      "id": "racing:irl",
+      "name": "IndyCar",
+      "ok": true,
+      "events": 0,
+      "reported_name": "IndyCar Series"
+    },
+    {
+      "id": "racing:nascar-premier",
+      "name": "NASCAR Cup",
+      "ok": true,
+      "events": 1,
+      "reported_name": "NASCAR Cup Series"
+    },
+    {
+      "id": "racing:nascar-secondary",
+      "name": "NASCAR O'Reilly Auto Parts Series",
+      "ok": true,
+      "events": 0,
+      "reported_name": "NASCAR O'Reilly Auto Parts Series"
+    },
+    {
+      "id": "racing:nascar-truck",
+      "name": "NASCAR Truck Series",
+      "ok": true,
+      "events": 0,
+      "reported_name": "NASCAR Truck Series"
+    },
+    {
+      "id": "golf:pga",
+      "name": "PGA Tour",
+      "ok": true,
+      "events": 1,
+      "reported_name": "PGA Tour"
+    },
+    {
+      "id": "golf:lpga",
+      "name": "LPGA Tour",
+      "ok": true,
+      "events": 1,
+      "reported_name": "Ladies Pro Golf Association"
+    },
+    {
+      "id": "golf:eur",
+      "name": "DP World Tour",
+      "ok": true,
+      "events": 1,
+      "reported_name": "DP World Tour"
+    },
+    {
+      "id": "golf:liv",
+      "name": "LIV Golf",
+      "ok": true,
+      "events": 0,
+      "reported_name": "LIV Golf Invitational Series"
+    },
+    {
+      "id": "mma:ufc",
+      "name": "UFC",
+      "ok": true,
+      "events": 0,
+      "reported_name": "Ultimate Fighting Championship"
+    },
+    {
+      "id": "australian-football:afl",
+      "name": "AFL",
+      "ok": true,
+      "events": 0,
+      "reported_name": "AFL"
+    }
+  ]
+}
