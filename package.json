@@ -1,0 +1,11 @@
+{
+  "name": "ha-sports-hub",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/frontend.test.js",
+    "build": "node scripts/build.mjs",
+    "check": "npm test && npm run build && node --check custom_components/sports_hub/frontend/sports-hub.js"
+  }
+}

@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+.coverage
+htmlcov/
+build/
+.DS_Store
+.ruff_cache/
+docs/live-data.json
+tests/fixtures/live/
+dev-config/
