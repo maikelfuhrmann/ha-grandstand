@@ -20,7 +20,7 @@ def f1_bridge(hass):
     entities={}
     for item in er.async_entries_for_config_entry(registry,entry.entry_id):
         if item.disabled:continue
-        for key in ('driver_positions','current_session','session_status','track_status'):
+        for key in ('driver_positions','driver_list','current_session','session_status','track_status'):
             if item.unique_id.endswith('_'+key):entities[key]=item.entity_id
     enabled={**entry.data,**entry.options}.get('install_dashboard_cards',True)
     return {'available':True,'entry_id':entry.entry_id,'cards_enabled':enabled,'module_url':'/local/f1-sensor-live-data-card/register.js','entities':entities}
