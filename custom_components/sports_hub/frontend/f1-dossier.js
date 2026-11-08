@@ -22,6 +22,7 @@ export const f1DossierMethods={
     if(native){
       if(this.view==='home'){
         content+=slot('overview',this.t.nextUp,[module('overview','',{layout_mode:'full'},['meeting','circuit','countdown','circuit_map'])],true);
+        if(!this.hideScores)content+=slot('starting-grid',this.t.grid,[],true);
         content+=slot('forecast',this.t.forecast,[module('weather','',{content:'race_forecast',presentation:'metrics',show_explanation:false},['weather_condition','temperature','rain_probability','wind'])]);
         content+=slot('weekend',this.t.weekend,[module('calendar','',{range:'weekend',timezone:'home',past:'dim',next:'label'})]);
         if(!this.hideScores){content+=slot('compact-wm',this.t.championship,[standings(false,5),standings(true,5)]);content+=slot('last-control',this.t.raceControl,[module('race_control','',{presentation:'latest_message',limit:1,show_clear_button:false})],false,true);}
@@ -37,7 +38,7 @@ export const f1DossierMethods={
       }else if(this.view==='schedule')content+=slot('season',this.t.seasonSchedule,[module('calendar','',{range:'season',sessions:['race'],past:'dim',next:'label',details:['round','circuit'],timezone:'home'})],true);
       else if(this.view==='results'){
         content+=slot('results',this.t.results,[module('results',this.t.recentMatches,{content:'latest_race',rows:22},['result_position','driver','result_time','points'])]);
-        content+=slot('grid',this.t.grid,[module('results','',{content:'starting_grid',rows:22},['grid_position','driver','qualifying_time'])]);
+        content+=slot('starting-grid',this.t.grid,[],true);
         content+=slot('replay',this.t.replay,[module('replay','',{display:'compact'})],true);
       }else if(this.view==='raceControl'){
         content+=slot('control',this.t.raceControl,[control(100)],true,true);
@@ -81,10 +82,10 @@ export const f1DossierMethods={
       for(const [id,spec] of Object.entries(specs)){
         const slot=this.shadowRoot.querySelector(`[data-f1-slot="${id}"]`);if(!slot)continue;
         try{
-          const circle=id==='circle',entities=bridge.entities||{};
-          const config=circle?{type:'custom:f1-circle-of-doom-card',title:'Circle of Doom',entity:entities.driver_positions,session_entity:entities.current_session,session_status_entity:entities.session_status,track_status_entity:entities.track_status,uncertainty:2,stale_after:90}:f1CardConfig(spec.title,spec.modules,bridge.entry_id,spec.live);
+          const circle=id==='circle',startingGrid=id==='starting-grid',entities=bridge.entities||{};
+          const config=startingGrid?{entry_id:bridge.entry_id,compact:this.view==='home'}:circle?{type:'custom:f1-circle-of-doom-card',title:'Circle of Doom',entity:entities.driver_positions,session_entity:entities.current_session,session_status_entity:entities.session_status,track_status_entity:entities.track_status,uncertainty:2,stale_after:90}:f1CardConfig(spec.title,spec.modules,bridge.entry_id,spec.live);
           const signature=JSON.stringify(config),old=this._nativeCards.get(id);
-          const card=old?.signature===signature?old.card:document.createElement(circle?'f1-circle-of-doom-card':'f1-sensor-card');
+          const card=old?.signature===signature?old.card:document.createElement(startingGrid?'sports-hub-starting-grid':circle?'f1-circle-of-doom-card':'f1-sensor-card');
           if(card!==old?.card)card.setConfig(config);
           card.hass=this._hass;slot.replaceChildren(card);current.set(id,{card,signature});
         }catch{slot.innerHTML=`<p class="notice">${escapeHtml(this.t.f1CardError)}</p>`;}
