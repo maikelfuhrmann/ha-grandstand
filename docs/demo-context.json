@@ -1,0 +1,2546 @@
+{
+  "team:soccer:ger.1:demo-a": {
+    "events": [
+      {
+        "id": "demo-season-0",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-10-21T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "finished",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": "0",
+            "winner": true,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": "1",
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-1",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-10-27T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "finished",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": "1",
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": "2",
+            "winner": true,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-2",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-01T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "finished",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": "2",
+            "winner": true,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": "3",
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-3",
+        "league_id": "soccer:ger.dfb_pokal",
+        "sport": "soccer",
+        "league": "DFB-Pokal",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-04T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "finished",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": "3",
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": "0",
+            "winner": true,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": true,
+        "round": ""
+      },
+      {
+        "id": "demo-season-4",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-07T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "finished",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": "0",
+            "winner": true,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": "1",
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-5",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-15T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "scheduled",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": null,
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": null,
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-6",
+        "league_id": "soccer:ger.dfb_pokal",
+        "sport": "soccer",
+        "league": "DFB-Pokal",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-22T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "scheduled",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": null,
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": null,
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": true,
+        "round": "Round of 16"
+      },
+      {
+        "id": "demo-season-7",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-29T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "scheduled",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": null,
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": null,
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-8",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-12-06T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "scheduled",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": null,
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": null,
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      }
+    ],
+    "tables": [
+      {
+        "league_id": "soccer:ger.1",
+        "name": "Bundesliga \u00b7 Demo",
+        "groups": [
+          {
+            "name": "Synthetic demo standings",
+            "entries": [
+              {
+                "rank": 1,
+                "team": {
+                  "key": "soccer:ger.1:demo-a",
+                  "name": "Harbor FC",
+                  "short_name": "Harbor FC",
+                  "score": "2",
+                  "winner": false,
+                  "order": 1,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "0"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 6,
+                    "display": "6"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 1,
+                    "display": "1"
+                  },
+                  "pointsFor": {
+                    "value": 20,
+                    "display": "20"
+                  },
+                  "pointsAgainst": {
+                    "value": 8,
+                    "display": "8"
+                  },
+                  "pointDifferential": {
+                    "value": 12,
+                    "display": "12"
+                  },
+                  "points": {
+                    "value": 20,
+                    "display": "20"
+                  }
+                }
+              },
+              {
+                "rank": 2,
+                "team": {
+                  "key": "soccer:ger.1:demo-b",
+                  "name": "Northside United",
+                  "short_name": "Northside United",
+                  "score": "1",
+                  "winner": false,
+                  "order": 2,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "1"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 6,
+                    "display": "6"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 1,
+                    "display": "1"
+                  },
+                  "pointsFor": {
+                    "value": 19,
+                    "display": "19"
+                  },
+                  "pointsAgainst": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "pointDifferential": {
+                    "value": 10,
+                    "display": "10"
+                  },
+                  "points": {
+                    "value": 18,
+                    "display": "18"
+                  }
+                }
+              },
+              {
+                "rank": 3,
+                "team": {
+                  "key": "demo-team-2",
+                  "name": "Riverside City",
+                  "short_name": "Harbor FC",
+                  "score": "2",
+                  "winner": false,
+                  "order": 1,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "2"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 5,
+                    "display": "5"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "pointsFor": {
+                    "value": 18,
+                    "display": "18"
+                  },
+                  "pointsAgainst": {
+                    "value": 10,
+                    "display": "10"
+                  },
+                  "pointDifferential": {
+                    "value": 8,
+                    "display": "8"
+                  },
+                  "points": {
+                    "value": 16,
+                    "display": "16"
+                  }
+                }
+              },
+              {
+                "rank": 4,
+                "team": {
+                  "key": "demo-team-3",
+                  "name": "Mountain Athletic",
+                  "short_name": "Northside United",
+                  "score": "1",
+                  "winner": false,
+                  "order": 2,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "3"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 5,
+                    "display": "5"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "pointsFor": {
+                    "value": 17,
+                    "display": "17"
+                  },
+                  "pointsAgainst": {
+                    "value": 11,
+                    "display": "11"
+                  },
+                  "pointDifferential": {
+                    "value": 6,
+                    "display": "6"
+                  },
+                  "points": {
+                    "value": 14,
+                    "display": "14"
+                  }
+                }
+              },
+              {
+                "rank": 5,
+                "team": {
+                  "key": "demo-team-4",
+                  "name": "Westfield SC",
+                  "short_name": "Harbor FC",
+                  "score": "2",
+                  "winner": false,
+                  "order": 1,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "4"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 4,
+                    "display": "4"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 3,
+                    "display": "3"
+                  },
+                  "pointsFor": {
+                    "value": 16,
+                    "display": "16"
+                  },
+                  "pointsAgainst": {
+                    "value": 12,
+                    "display": "12"
+                  },
+                  "pointDifferential": {
+                    "value": 4,
+                    "display": "4"
+                  },
+                  "points": {
+                    "value": 12,
+                    "display": "12"
+                  }
+                }
+              },
+              {
+                "rank": 6,
+                "team": {
+                  "key": "demo-team-5",
+                  "name": "Coastal Town",
+                  "short_name": "Northside United",
+                  "score": "1",
+                  "winner": false,
+                  "order": 2,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "5"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 4,
+                    "display": "4"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 3,
+                    "display": "3"
+                  },
+                  "pointsFor": {
+                    "value": 15,
+                    "display": "15"
+                  },
+                  "pointsAgainst": {
+                    "value": 13,
+                    "display": "13"
+                  },
+                  "pointDifferential": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "points": {
+                    "value": 10,
+                    "display": "10"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "competitions": [
+      {
+        "id": "soccer:ger.1",
+        "name": "Bundesliga",
+        "tournament": false,
+        "played": 4,
+        "upcoming": 3,
+        "rank": 1,
+        "points": 20
+      },
+      {
+        "id": "soccer:ger.dfb_pokal",
+        "name": "DFB-Pokal",
+        "tournament": true,
+        "played": 1,
+        "upcoming": 1,
+        "round": "Round of 16"
+      }
+    ],
+    "news": {
+      "articles": [
+        {
+          "title": "Demo: Club training update before the next home match",
+          "source": "Synthetic preview",
+          "published": "2026-11-08T15:00:00+00:00",
+          "url": "https://github.com/maikelfuhrmann/ha-sports-hub#development"
+        },
+        {
+          "title": "Demo: Cup fixture and season schedule announced",
+          "source": "Synthetic preview",
+          "published": "2026-11-08T15:00:00+00:00",
+          "url": "https://github.com/maikelfuhrmann/ha-sports-hub#development"
+        }
+      ],
+      "updated_at": "2026-11-08T15:00:00+00:00",
+      "stale": false
+    },
+    "sources": [
+      {
+        "name": "Synthetic preview data",
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "stale": false
+      }
+    ],
+    "key": "team:soccer:ger.1:demo-a",
+    "kind": "team",
+    "team": {
+      "id": "0",
+      "name": "Harbor FC",
+      "venue": "Demo Arena",
+      "city": "Preview City",
+      "capacity": 42000,
+      "stats": {
+        "gamesPlayed": {
+          "value": 9,
+          "display": "9"
+        },
+        "wins": {
+          "value": 6,
+          "display": "6"
+        },
+        "ties": {
+          "value": 2,
+          "display": "2"
+        },
+        "losses": {
+          "value": 1,
+          "display": "1"
+        },
+        "pointsFor": {
+          "value": 20,
+          "display": "20"
+        },
+        "pointsAgainst": {
+          "value": 8,
+          "display": "8"
+        },
+        "pointDifferential": {
+          "value": 12,
+          "display": "12"
+        },
+        "points": {
+          "value": 20,
+          "display": "20"
+        }
+      }
+    },
+    "roster": [
+      {
+        "name": "Alex Morgan",
+        "number": "1",
+        "position": "GK",
+        "age": 22,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      },
+      {
+        "name": "Sam Rivers",
+        "number": "2",
+        "position": "DF",
+        "age": 23,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      },
+      {
+        "name": "Jamie Park",
+        "number": "3",
+        "position": "MF",
+        "age": 24,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      },
+      {
+        "name": "Robin Lane",
+        "number": "4",
+        "position": "FW",
+        "age": 25,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      },
+      {
+        "name": "Taylor Reed",
+        "number": "5",
+        "position": "GK",
+        "age": 26,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      },
+      {
+        "name": "Casey Hill",
+        "number": "6",
+        "position": "DF",
+        "age": 27,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      },
+      {
+        "name": "Jordan Lake",
+        "number": "7",
+        "position": "MF",
+        "age": 28,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      },
+      {
+        "name": "Charlie West",
+        "number": "8",
+        "position": "FW",
+        "age": 29,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      }
+    ]
+  },
+  "team:soccer:ger.1:demo-b": {
+    "events": [
+      {
+        "id": "demo-season-0",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-10-21T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "finished",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": "0",
+            "winner": true,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": "1",
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-1",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-10-27T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "finished",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": "1",
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": "2",
+            "winner": true,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-2",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-01T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "finished",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": "2",
+            "winner": true,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": "3",
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-3",
+        "league_id": "soccer:ger.dfb_pokal",
+        "sport": "soccer",
+        "league": "DFB-Pokal",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-04T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "finished",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": "3",
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": "0",
+            "winner": true,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": true,
+        "round": ""
+      },
+      {
+        "id": "demo-season-4",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-07T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "finished",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": "0",
+            "winner": true,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": "1",
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-5",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-15T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "scheduled",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": null,
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": null,
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-6",
+        "league_id": "soccer:ger.dfb_pokal",
+        "sport": "soccer",
+        "league": "DFB-Pokal",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-22T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "scheduled",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": null,
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": null,
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": true,
+        "round": "Round of 16"
+      },
+      {
+        "id": "demo-season-7",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-29T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "scheduled",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": null,
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": null,
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-8",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-12-06T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "scheduled",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": null,
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": null,
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      }
+    ],
+    "tables": [
+      {
+        "league_id": "soccer:ger.1",
+        "name": "Bundesliga \u00b7 Demo",
+        "groups": [
+          {
+            "name": "Synthetic demo standings",
+            "entries": [
+              {
+                "rank": 1,
+                "team": {
+                  "key": "soccer:ger.1:demo-a",
+                  "name": "Harbor FC",
+                  "short_name": "Harbor FC",
+                  "score": "2",
+                  "winner": false,
+                  "order": 1,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "0"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 6,
+                    "display": "6"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 1,
+                    "display": "1"
+                  },
+                  "pointsFor": {
+                    "value": 20,
+                    "display": "20"
+                  },
+                  "pointsAgainst": {
+                    "value": 8,
+                    "display": "8"
+                  },
+                  "pointDifferential": {
+                    "value": 12,
+                    "display": "12"
+                  },
+                  "points": {
+                    "value": 20,
+                    "display": "20"
+                  }
+                }
+              },
+              {
+                "rank": 2,
+                "team": {
+                  "key": "soccer:ger.1:demo-b",
+                  "name": "Northside United",
+                  "short_name": "Northside United",
+                  "score": "1",
+                  "winner": false,
+                  "order": 2,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "1"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 6,
+                    "display": "6"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 1,
+                    "display": "1"
+                  },
+                  "pointsFor": {
+                    "value": 19,
+                    "display": "19"
+                  },
+                  "pointsAgainst": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "pointDifferential": {
+                    "value": 10,
+                    "display": "10"
+                  },
+                  "points": {
+                    "value": 18,
+                    "display": "18"
+                  }
+                }
+              },
+              {
+                "rank": 3,
+                "team": {
+                  "key": "demo-team-2",
+                  "name": "Riverside City",
+                  "short_name": "Harbor FC",
+                  "score": "2",
+                  "winner": false,
+                  "order": 1,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "2"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 5,
+                    "display": "5"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "pointsFor": {
+                    "value": 18,
+                    "display": "18"
+                  },
+                  "pointsAgainst": {
+                    "value": 10,
+                    "display": "10"
+                  },
+                  "pointDifferential": {
+                    "value": 8,
+                    "display": "8"
+                  },
+                  "points": {
+                    "value": 16,
+                    "display": "16"
+                  }
+                }
+              },
+              {
+                "rank": 4,
+                "team": {
+                  "key": "demo-team-3",
+                  "name": "Mountain Athletic",
+                  "short_name": "Northside United",
+                  "score": "1",
+                  "winner": false,
+                  "order": 2,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "3"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 5,
+                    "display": "5"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "pointsFor": {
+                    "value": 17,
+                    "display": "17"
+                  },
+                  "pointsAgainst": {
+                    "value": 11,
+                    "display": "11"
+                  },
+                  "pointDifferential": {
+                    "value": 6,
+                    "display": "6"
+                  },
+                  "points": {
+                    "value": 14,
+                    "display": "14"
+                  }
+                }
+              },
+              {
+                "rank": 5,
+                "team": {
+                  "key": "demo-team-4",
+                  "name": "Westfield SC",
+                  "short_name": "Harbor FC",
+                  "score": "2",
+                  "winner": false,
+                  "order": 1,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "4"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 4,
+                    "display": "4"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 3,
+                    "display": "3"
+                  },
+                  "pointsFor": {
+                    "value": 16,
+                    "display": "16"
+                  },
+                  "pointsAgainst": {
+                    "value": 12,
+                    "display": "12"
+                  },
+                  "pointDifferential": {
+                    "value": 4,
+                    "display": "4"
+                  },
+                  "points": {
+                    "value": 12,
+                    "display": "12"
+                  }
+                }
+              },
+              {
+                "rank": 6,
+                "team": {
+                  "key": "demo-team-5",
+                  "name": "Coastal Town",
+                  "short_name": "Northside United",
+                  "score": "1",
+                  "winner": false,
+                  "order": 2,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "5"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 4,
+                    "display": "4"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 3,
+                    "display": "3"
+                  },
+                  "pointsFor": {
+                    "value": 15,
+                    "display": "15"
+                  },
+                  "pointsAgainst": {
+                    "value": 13,
+                    "display": "13"
+                  },
+                  "pointDifferential": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "points": {
+                    "value": 10,
+                    "display": "10"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "competitions": [
+      {
+        "id": "soccer:ger.1",
+        "name": "Bundesliga",
+        "tournament": false,
+        "played": 4,
+        "upcoming": 3,
+        "rank": 1,
+        "points": 20
+      },
+      {
+        "id": "soccer:ger.dfb_pokal",
+        "name": "DFB-Pokal",
+        "tournament": true,
+        "played": 1,
+        "upcoming": 1,
+        "round": "Round of 16"
+      }
+    ],
+    "news": {
+      "articles": [
+        {
+          "title": "Demo: Club training update before the next home match",
+          "source": "Synthetic preview",
+          "published": "2026-11-08T15:00:00+00:00",
+          "url": "https://github.com/maikelfuhrmann/ha-sports-hub#development"
+        },
+        {
+          "title": "Demo: Cup fixture and season schedule announced",
+          "source": "Synthetic preview",
+          "published": "2026-11-08T15:00:00+00:00",
+          "url": "https://github.com/maikelfuhrmann/ha-sports-hub#development"
+        }
+      ],
+      "updated_at": "2026-11-08T15:00:00+00:00",
+      "stale": false
+    },
+    "sources": [
+      {
+        "name": "Synthetic preview data",
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "stale": false
+      }
+    ],
+    "key": "team:soccer:ger.1:demo-b",
+    "kind": "team",
+    "team": {
+      "id": "1",
+      "name": "Northside United",
+      "venue": "Demo Arena",
+      "city": "Preview City",
+      "capacity": 42000,
+      "stats": {
+        "gamesPlayed": {
+          "value": 9,
+          "display": "9"
+        },
+        "wins": {
+          "value": 6,
+          "display": "6"
+        },
+        "ties": {
+          "value": 2,
+          "display": "2"
+        },
+        "losses": {
+          "value": 1,
+          "display": "1"
+        },
+        "pointsFor": {
+          "value": 19,
+          "display": "19"
+        },
+        "pointsAgainst": {
+          "value": 9,
+          "display": "9"
+        },
+        "pointDifferential": {
+          "value": 10,
+          "display": "10"
+        },
+        "points": {
+          "value": 18,
+          "display": "18"
+        }
+      }
+    },
+    "roster": [
+      {
+        "name": "Alex Morgan",
+        "number": "1",
+        "position": "GK",
+        "age": 22,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      },
+      {
+        "name": "Sam Rivers",
+        "number": "2",
+        "position": "DF",
+        "age": 23,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      },
+      {
+        "name": "Jamie Park",
+        "number": "3",
+        "position": "MF",
+        "age": 24,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      },
+      {
+        "name": "Robin Lane",
+        "number": "4",
+        "position": "FW",
+        "age": 25,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      },
+      {
+        "name": "Taylor Reed",
+        "number": "5",
+        "position": "GK",
+        "age": 26,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      },
+      {
+        "name": "Casey Hill",
+        "number": "6",
+        "position": "DF",
+        "age": 27,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      },
+      {
+        "name": "Jordan Lake",
+        "number": "7",
+        "position": "MF",
+        "age": 28,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      },
+      {
+        "name": "Charlie West",
+        "number": "8",
+        "position": "FW",
+        "age": 29,
+        "country": "Demo",
+        "photo": "",
+        "url": ""
+      }
+    ]
+  },
+  "league:soccer:ger.1": {
+    "events": [
+      {
+        "id": "demo-season-0",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-10-21T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "finished",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": "0",
+            "winner": true,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": "1",
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-1",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-10-27T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "finished",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": "1",
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": "2",
+            "winner": true,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-2",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-01T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "finished",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": "2",
+            "winner": true,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": "3",
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-3",
+        "league_id": "soccer:ger.dfb_pokal",
+        "sport": "soccer",
+        "league": "DFB-Pokal",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-04T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "finished",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": "3",
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": "0",
+            "winner": true,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": true,
+        "round": ""
+      },
+      {
+        "id": "demo-season-4",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-07T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "finished",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": "0",
+            "winner": true,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": "1",
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-5",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-15T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "scheduled",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": null,
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": null,
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-6",
+        "league_id": "soccer:ger.dfb_pokal",
+        "sport": "soccer",
+        "league": "DFB-Pokal",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-22T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "scheduled",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": null,
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": null,
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": true,
+        "round": "Round of 16"
+      },
+      {
+        "id": "demo-season-7",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-11-29T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "scheduled",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": null,
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": null,
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      },
+      {
+        "id": "demo-season-8",
+        "league_id": "soccer:ger.1",
+        "sport": "soccer",
+        "league": "Bundesliga",
+        "name": "Harbor FC vs Northside United",
+        "subtitle": "Demo event",
+        "date": "2026-12-06T15:00:00+00:00",
+        "end_date": null,
+        "time_confirmed": true,
+        "state": "scheduled",
+        "status": "Demo",
+        "clock": "",
+        "period": 1,
+        "format": "match",
+        "venue": "Demo Arena",
+        "url": "",
+        "stale": false,
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "participants": [
+          {
+            "key": "soccer:ger.1:demo-a",
+            "name": "Harbor FC",
+            "short_name": "Harbor FC",
+            "score": null,
+            "winner": false,
+            "order": 1,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          },
+          {
+            "key": "soccer:ger.1:demo-b",
+            "name": "Northside United",
+            "short_name": "Northside United",
+            "score": null,
+            "winner": false,
+            "order": 2,
+            "logo": "",
+            "record": "",
+            "linescores": []
+          }
+        ],
+        "tournament": false,
+        "round": ""
+      }
+    ],
+    "tables": [
+      {
+        "league_id": "soccer:ger.1",
+        "name": "Bundesliga \u00b7 Demo",
+        "groups": [
+          {
+            "name": "Synthetic demo standings",
+            "entries": [
+              {
+                "rank": 1,
+                "team": {
+                  "key": "soccer:ger.1:demo-a",
+                  "name": "Harbor FC",
+                  "short_name": "Harbor FC",
+                  "score": "2",
+                  "winner": false,
+                  "order": 1,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "0"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 6,
+                    "display": "6"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 1,
+                    "display": "1"
+                  },
+                  "pointsFor": {
+                    "value": 20,
+                    "display": "20"
+                  },
+                  "pointsAgainst": {
+                    "value": 8,
+                    "display": "8"
+                  },
+                  "pointDifferential": {
+                    "value": 12,
+                    "display": "12"
+                  },
+                  "points": {
+                    "value": 20,
+                    "display": "20"
+                  }
+                }
+              },
+              {
+                "rank": 2,
+                "team": {
+                  "key": "soccer:ger.1:demo-b",
+                  "name": "Northside United",
+                  "short_name": "Northside United",
+                  "score": "1",
+                  "winner": false,
+                  "order": 2,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "1"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 6,
+                    "display": "6"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 1,
+                    "display": "1"
+                  },
+                  "pointsFor": {
+                    "value": 19,
+                    "display": "19"
+                  },
+                  "pointsAgainst": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "pointDifferential": {
+                    "value": 10,
+                    "display": "10"
+                  },
+                  "points": {
+                    "value": 18,
+                    "display": "18"
+                  }
+                }
+              },
+              {
+                "rank": 3,
+                "team": {
+                  "key": "demo-team-2",
+                  "name": "Riverside City",
+                  "short_name": "Harbor FC",
+                  "score": "2",
+                  "winner": false,
+                  "order": 1,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "2"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 5,
+                    "display": "5"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "pointsFor": {
+                    "value": 18,
+                    "display": "18"
+                  },
+                  "pointsAgainst": {
+                    "value": 10,
+                    "display": "10"
+                  },
+                  "pointDifferential": {
+                    "value": 8,
+                    "display": "8"
+                  },
+                  "points": {
+                    "value": 16,
+                    "display": "16"
+                  }
+                }
+              },
+              {
+                "rank": 4,
+                "team": {
+                  "key": "demo-team-3",
+                  "name": "Mountain Athletic",
+                  "short_name": "Northside United",
+                  "score": "1",
+                  "winner": false,
+                  "order": 2,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "3"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 5,
+                    "display": "5"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "pointsFor": {
+                    "value": 17,
+                    "display": "17"
+                  },
+                  "pointsAgainst": {
+                    "value": 11,
+                    "display": "11"
+                  },
+                  "pointDifferential": {
+                    "value": 6,
+                    "display": "6"
+                  },
+                  "points": {
+                    "value": 14,
+                    "display": "14"
+                  }
+                }
+              },
+              {
+                "rank": 5,
+                "team": {
+                  "key": "demo-team-4",
+                  "name": "Westfield SC",
+                  "short_name": "Harbor FC",
+                  "score": "2",
+                  "winner": false,
+                  "order": 1,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "4"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 4,
+                    "display": "4"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 3,
+                    "display": "3"
+                  },
+                  "pointsFor": {
+                    "value": 16,
+                    "display": "16"
+                  },
+                  "pointsAgainst": {
+                    "value": 12,
+                    "display": "12"
+                  },
+                  "pointDifferential": {
+                    "value": 4,
+                    "display": "4"
+                  },
+                  "points": {
+                    "value": 12,
+                    "display": "12"
+                  }
+                }
+              },
+              {
+                "rank": 6,
+                "team": {
+                  "key": "demo-team-5",
+                  "name": "Coastal Town",
+                  "short_name": "Northside United",
+                  "score": "1",
+                  "winner": false,
+                  "order": 2,
+                  "logo": "",
+                  "record": "",
+                  "linescores": [],
+                  "id": "5"
+                },
+                "stats": {
+                  "gamesPlayed": {
+                    "value": 9,
+                    "display": "9"
+                  },
+                  "wins": {
+                    "value": 4,
+                    "display": "4"
+                  },
+                  "ties": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "losses": {
+                    "value": 3,
+                    "display": "3"
+                  },
+                  "pointsFor": {
+                    "value": 15,
+                    "display": "15"
+                  },
+                  "pointsAgainst": {
+                    "value": 13,
+                    "display": "13"
+                  },
+                  "pointDifferential": {
+                    "value": 2,
+                    "display": "2"
+                  },
+                  "points": {
+                    "value": 10,
+                    "display": "10"
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "competitions": [
+      {
+        "id": "soccer:ger.1",
+        "name": "Bundesliga",
+        "tournament": false,
+        "played": 4,
+        "upcoming": 3,
+        "rank": 1,
+        "points": 20
+      },
+      {
+        "id": "soccer:ger.dfb_pokal",
+        "name": "DFB-Pokal",
+        "tournament": true,
+        "played": 1,
+        "upcoming": 1,
+        "round": "Round of 16"
+      }
+    ],
+    "news": {
+      "articles": [
+        {
+          "title": "Demo: Club training update before the next home match",
+          "source": "Synthetic preview",
+          "published": "2026-11-08T15:00:00+00:00",
+          "url": "https://github.com/maikelfuhrmann/ha-sports-hub#development"
+        },
+        {
+          "title": "Demo: Cup fixture and season schedule announced",
+          "source": "Synthetic preview",
+          "published": "2026-11-08T15:00:00+00:00",
+          "url": "https://github.com/maikelfuhrmann/ha-sports-hub#development"
+        }
+      ],
+      "updated_at": "2026-11-08T15:00:00+00:00",
+      "stale": false
+    },
+    "sources": [
+      {
+        "name": "Synthetic preview data",
+        "updated_at": "2026-11-08T15:00:00+00:00",
+        "stale": false
+      }
+    ],
+    "key": "league:soccer:ger.1",
+    "kind": "league",
+    "team": {}
+  }
+}

@@ -12,7 +12,7 @@
       "time_confirmed": true,
       "state": "live",
       "status": "Demo",
-      "clock": "54′",
+      "clock": "54\u2032",
       "period": 1,
       "format": "match",
       "venue": "Demo Arena",
@@ -232,7 +232,7 @@
       "time_confirmed": true,
       "state": "scheduled",
       "status": "Demo",
-      "clock": "54′",
+      "clock": "54\u2032",
       "period": 1,
       "format": "match",
       "venue": "Demo Arena",
@@ -522,7 +522,7 @@
       "id": "soccer:tur.1",
       "sport": "soccer",
       "path": "tur.1",
-      "name": "Süper Lig",
+      "name": "S\u00fcper Lig",
       "region": "TR",
       "icon": "mdi:soccer",
       "event_count": 0,
@@ -732,7 +732,7 @@
       "id": "soccer:bra.1",
       "sport": "soccer",
       "path": "bra.1",
-      "name": "Brasileirão",
+      "name": "Brasileir\u00e3o",
       "region": "BR",
       "icon": "mdi:soccer",
       "event_count": 0,
@@ -746,7 +746,7 @@
       "id": "soccer:arg.1",
       "sport": "soccer",
       "path": "arg.1",
-      "name": "Argentine Primera División",
+      "name": "Argentine Primera Divisi\u00f3n",
       "region": "AR",
       "icon": "mdi:soccer",
       "event_count": 0,
@@ -1111,7 +1111,7 @@
     {
       "id": "soccer",
       "name": "Football",
-      "name_de": "Fußball",
+      "name_de": "Fu\u00dfball",
       "icon": "mdi:soccer"
     },
     {
@@ -1173,6 +1173,6 @@
   "generated_at": "2026-11-08T15:00:00+00:00",
   "window_start": "2026-11-06T00:00:00+00:00",
   "window_end": "2026-11-16T00:00:00+00:00",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "loading": false
 }
