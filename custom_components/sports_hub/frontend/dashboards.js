@@ -20,11 +20,11 @@ const leagueColors={
 };
 export function profileFromParticipant(participant,event) {
   return {key:`team:${participant.key}`,kind:'team',target:participant.key,name:participant.name,
-    context:event.league,sport:event.sport,logo:safeUrl(participant.logo),color:colorValue(participant.color),
+    context:event.league,league_id:event.league_id,sport:event.sport,logo:safeUrl(participant.logo),color:colorValue(participant.color),
     alternate_color:colorValue(participant.alternate_color,'#ffffff'),abbreviation:participant.abbreviation||'',short_name:participant.short_name||''};
 }
 export function profileFromLeague(league) {
-  return {key:`league:${league.id}`,kind:'league',target:league.id,name:league.name,sport:league.sport,
+  return {key:`league:${league.id}`,kind:'league',target:league.id,league_id:league.id,name:league.name,sport:league.sport,
     logo:safeUrl(league.logo),color:colorValue(league.color,leagueColors[league.id]||'#315bd6'),
     alternate_color:colorValue(league.alternate_color,'#ffffff')};
 }
