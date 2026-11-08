@@ -132,3 +132,13 @@ test('headshots prefer matching official season and identity, otherwise use a po
  assert.equal(f1HeadshotAsset('Unknown',2026,ds),null);
  assert.equal(f1HeadshotAsset('Lando Norris',2025,ds),null);
 });
+
+import {radarUrl} from '../custom_components/sports_hub/frontend/radar.js';
+test('radar is centered on the event coordinates and selects observed radar',()=>{
+ const u=new URL(radarUrl({latitude:-23.7036,longitude:-46.6997},'de'));
+ assert.equal(u.hostname,'embed.windy.com');assert.equal(u.searchParams.get('overlay'),'radar');assert.equal(u.searchParams.get('product'),'radar');assert.equal(u.searchParams.get('lat'),'-23.7036');assert.equal(u.searchParams.get('lon'),'-46.6997');assert.equal(u.searchParams.get('lang'),'de');
+});
+test('radar cannot silently use zero or home coordinates for missing venue data',()=>{
+ for(const p of [null,{}, {latitude:null,longitude:0},{latitude:'',longitude:0},{latitude:true,longitude:0},{latitude:91,longitude:0},{latitude:0,longitude:Infinity}])assert.equal(radarUrl(p),'');
+ assert.ok(radarUrl({latitude:0,longitude:0}));
+});

@@ -25,6 +25,11 @@ class EnrichmentModels(unittest.TestCase):
         self.assertEqual(len(events),1);self.assertEqual(events[0]['league_id'],'soccer:ger.dfb_pokal')
         self.assertEqual(events[0]['round'],'Round of 16');self.assertTrue(events[0]['tournament'])
         self.assertEqual(normalize_schedule({'events':[fixture()]},LEAGUE,'999'),[])
+    def test_fixture_uses_its_own_competition_logo(self):
+        raw=fixture();raw['league']['logos']=[{'href':'https://example.com/cup.png'}]
+        event=normalize_schedule({'events':[raw]},LEAGUE,'125')[0]
+        self.assertEqual(event['league_id'],'soccer:ger.dfb_pokal')
+        self.assertEqual(event['league_logo'],'https://example.com/cup.png')
     def test_grouped_standings_keep_numeric_zero_and_escape_at_render(self):
         data={'children':[{'name':'Eastern conference','standings':{'entries':[{'team':{'id':'1','displayName':'A & B'},'stats':[{'name':'wins','value':0,'displayValue':'0'},{'name':'points','value':12,'displayValue':'12'}]}]}}]}
         table=normalize_table(data,LEAGUE);self.assertEqual(table['groups'][0]['entries'][0]['stats']['wins']['value'],0)
