@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 import unittest
 
 from custom_components.sports_hub.catalog import LEAGUES, selected_leagues
-from custom_components.sports_hub.model import normalize_scoreboard, event_state, refresh_seconds, safe_url, parse_time
+from custom_components.sports_hub.model import normalize_scoreboard, event_state, refresh_seconds, safe_url, parse_time, league_branding
 
 START=datetime(2026,11,8,tzinfo=timezone.utc)
 END=START+timedelta(days=1)
@@ -20,6 +20,15 @@ class ModelTests(unittest.TestCase):
         result=self.parse(fixture())[0]
         self.assertEqual([p['name'] for p in result['participants']],['B','A'])
         self.assertEqual([p['score'] for p in result['participants']],['0','2'])
+
+    def test_provider_branding_preserves_valid_colors_and_logos(self):
+        data=fixture();team=data['events'][0]['competitions'][0]['competitors'][0]['team']
+        team.update({'color':'DC052D','alternateColor':'ffffff','logo':'https://example.com/team.png'})
+        participant=self.parse(data)[0]['participants'][1]
+        self.assertEqual(participant['color'],'#dc052d')
+        self.assertEqual(participant['alternate_color'],'#ffffff')
+        self.assertEqual(participant['logo'],'https://example.com/team.png')
+        self.assertEqual(league_branding({'leagues':[{'logos':[{'href':'javascript:bad'},{'href':'https://example.com/league.png'}]}]})['logo'],'https://example.com/league.png')
 
     def test_missing_scores_are_not_zero(self):
         data=fixture();del data['events'][0]['competitions'][0]['competitors'][0]['score']
