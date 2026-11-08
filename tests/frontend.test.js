@@ -26,3 +26,25 @@ test('search discovery is independent of match date and deduplicates clubs',()=>
 test('branding sanitizes colors and uses accessible button text',()=>{assert.equal(colorValue('dc052d'),'#dc052d');assert.equal(colorValue('red;display:none'),'#315bd6');assert.equal(contrastColor('#ffffff'),'#08101b');assert.equal(contrastColor('#000000'),'#ffffff');assert.equal(contrastColor('#dc052d'),'#ffffff');assert.equal(profileFromLeague({id:'soccer:ger.1',name:'Bundesliga',sport:'soccer'}).color,'#d20515');});
 test('a favorite alone cannot become an approved dashboard',()=>{assert.equal(approvedProfile([],'team:soccer:123'),null);});
 test('all six languages include complete dashboard and sports strings',()=>{for(const language of ['en','de','es','fr','it','nl']){assert.equal(languageCode(language+'-XX'),language);for(const key of Object.keys(words.en)){assert.ok(words[language][key],`${language}:${key}`);}assert.equal(Object.keys(words[language].sports).length,10);}assert.equal(languageCode('unknown'),'en');assert.equal(languageCode('__proto__'),'en');});
+
+import {mergeProfileEvents,clubForm,dossierTabs} from '../custom_components/sports_hub/frontend/dossier-model.js';
+import {f1CardConfig} from '../custom_components/sports_hub/frontend/f1-dossier.js';
+import {dossierMethods} from '../custom_components/sports_hub/frontend/dossier.js';
+import '../custom_components/sports_hub/frontend/dossier-i18n.js';
+test('season fixtures merge with newest live scores and stay scoped to selected club',()=>{
+  const profile={kind:'team',target:'soccer:123'},season={...base,id:'new',date:'2027-05-01',updated_at:'2026-11-08T10:00:00Z'};
+  const merged=mergeProfileEvents([{...base,updated_at:'2026-11-08T12:00:00Z'}],[{...base,updated_at:'2026-11-08T09:00:00Z'},season,{...season,id:'other',participants:[]}],profile);
+  assert.equal(merged.length,2);assert.equal(merged[0].updated_at,'2026-11-08T12:00:00Z');assert.equal(merged[1].id,'new');
+});
+test('form uses penalty winner, excludes missing scores and stale results',()=>{
+  const event={...base,format:'match',state:'finished',date:'2026-11-08',participants:[{key:'a',score:'1',winner:true},{key:'b',score:'1',winner:false}]};
+  assert.equal(clubForm([event,{...event,stale:true},{...event,participants:[{key:'a',score:null},{key:'b',score:0}]}],'a').length,1);assert.equal(clubForm([event],'a')[0].result,'W');
+});
+test('F1 modules use runtime-discovered entry and public timing context',()=>{
+  const config=f1CardConfig('Timing',[{type:'timing'}],'runtime-entry',true);assert.equal(config.f1_entry_id,'runtime-entry');assert.equal(config.context.selection.source,'live');assert.ok(dossierTabs({target:'racing:f1'}).includes('raceControl'));
+});
+test('spoiler protection hides standings, headlines and form content',()=>{
+  const panel={hideScores:true,t:words.en,_spoilerNotice:dossierMethods._spoilerNotice};
+  assert.equal(dossierMethods._tables.call(panel,{tables:[{}]},{}),dossierMethods._spoilerNotice.call(panel));
+  assert.equal(dossierMethods._news.call(panel,{news:{articles:[{title:'Spoiler'}]}}),dossierMethods._spoilerNotice.call(panel));
+});
