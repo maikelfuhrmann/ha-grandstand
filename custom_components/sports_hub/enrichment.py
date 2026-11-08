@@ -10,7 +10,7 @@ import aiohttp
 from .catalog import LEAGUES
 from .venue import resolve_venue
 from .const import API_ROOT, VERSION
-from .enrichment_model import normalize_table, normalize_schedule, normalize_team, normalize_roster, normalize_news_xml, normalize_news_espn, normalize_f1
+from .enrichment_model import normalize_table, normalize_schedule, normalize_team, normalize_roster, normalize_news_xml, normalize_news_espn, normalize_f1, infer_home_venue
 from .model import parse_time
 from .f1_results import parse_result_page, result_root, result_rows, select_weekend, jolpica_qualifying, F1_SITE
 
@@ -107,10 +107,10 @@ class EnrichmentProvider:
                         elif league['sport']=='soccer':participant['key']=f"soccer:s:600~t:{participant['id']}"
                     unique[event['id']]=event
             events=sorted(unique.values(),key=lambda e:e['date']);roster=normalize_roster(squad['data'])
-            # Use the selected team's own home fixture for stadium details when metadata omits it.
+            # A nominal home team in a friendly/neutral match does not identify its home stadium.
             if not info['venue']:
-                home=next((e for e in events if e.get('venue') and any(p['id']==team_id and p['home_away']=='home' for p in e['participants'])),None)
-                if home:info['venue']=home['venue']
+                home=infer_home_venue(events,team_id,league['id'])
+                if home:info.update({'venue':home['name'],'city':home.get('city','')})
             competition_ids=list(dict.fromkeys([league['id']]+[e['league_id'] for e in events]))[:12]
         else:
             competition_ids=[league['id']]

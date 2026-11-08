@@ -150,6 +150,7 @@ def normalize_scoreboard(payload, league, start, end):
                 "state": state, "status": text(kind.get("shortDetail") or kind.get("detail") or kind.get("description"), 120),
                 "clock": text(status.get("displayClock"), 20), "period": status.get("period"),
                 "participants": participants, "format": "leaderboard" if is_table else "match",
+                "neutral_site": comp.get("neutralSite") if isinstance(comp.get("neutralSite"), bool) else None,
                 "venue": text(venue.get("fullName") or venue.get("name"), 120), "location": venue_location(venue), "url": link,
             }
     return sorted(result.values(), key=lambda e: (e["date"], e["id"]))

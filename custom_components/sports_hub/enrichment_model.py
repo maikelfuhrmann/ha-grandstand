@@ -67,6 +67,27 @@ def normalize_team(payload):
     return {'id':text(team.get('id'),40),'name':text(team.get('displayName')), 'short_name':text(team.get('shortDisplayName')), 'record':text(record.get('summary'),60),'standing':text(team.get('standingSummary'),120),'stats':stats_map(record.get('stats')), 'venue':text(venue.get('fullName'),120), 'city':text((venue.get('address') or {}).get('city'),80), 'capacity':numeric(venue.get('capacity')), 'url':public_link(team.get('links'),'clubhouse'), 'league_slug':text((team.get('defaultLeague') or {}).get('slug') or team.get('leagueAbbrev'),80)}
 
 
+def infer_home_venue(events, team_id, league_id, now=None):
+    """Fallback from regular league home games, never a tour or neutral cup tie."""
+    now = now or datetime.now(timezone.utc)
+    played, upcoming = [], []
+    for event in events:
+        if event.get('league_id') != league_id or event.get('neutral_site') is not False or not event.get('venue'):
+            continue
+        if not any(p['id'] == team_id and p['home_away'] == 'home' for p in event['participants']):
+            continue
+        date = parse_time(event.get('date'))
+        if not date:
+            continue
+        if event.get('state') in ('finished', 'live') and date <= now:
+            played.append((date, event))
+        elif event.get('state') == 'scheduled' and date >= now:
+            upcoming.append((date, event))
+    # Recent actual home games take precedence over unplayed fixtures.
+    selected = max(played, key=lambda pair: pair[0])[1] if played else min(upcoming, key=lambda pair: pair[0])[1] if upcoming else None
+    return {**(selected.get('location') or {}), 'name': selected['venue']} if selected else None
+
+
 def normalize_roster(payload):
     result=[]
     def add(raw):
