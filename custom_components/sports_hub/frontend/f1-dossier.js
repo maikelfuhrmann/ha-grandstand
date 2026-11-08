@@ -32,11 +32,14 @@ export const f1DossierMethods={
         content+=slot('live-control',this.t.raceControl,[control(60)],false,true);
         content+=slot('weather',this.t.trackWeather,[module('weather','',{content:'track_conditions',presentation:'metrics'})],false,true);
         content+=slot('live-tyres',this.t.tyres,[module('tyres','',{content:'current',rows:22})],false,true);
-      }else if(this.view==='championship'){
+      }else if(this.view==='qualifying')content+=slot('qualifying',this.t.qualifying,[],true);
+      else if(this.view==='grid')content+=slot('starting-grid',this.t.grid,[],true);
+      else if(this.view==='championship'){
         content+=slot('drivers',this.t.drivers,[standings()]);content+=slot('constructors',this.t.constructors,[standings(true)]);
         content+=slot('progression',this.t.progression,[module('progression','',{series_limit:5,show_future_rounds:false,chart_height:320})],true);
       }else if(this.view==='schedule')content+=slot('season',this.t.seasonSchedule,[module('calendar','',{range:'season',sessions:['race'],past:'dim',next:'label',details:['round','circuit'],timezone:'home'})],true);
       else if(this.view==='results'){
+        content+=slot('qualifying',this.t.qualifying,[],true);
         content+=slot('results',this.t.results,[module('results',this.t.recentMatches,{content:'latest_race',rows:22},['result_position','driver','result_time','points'])]);
         content+=slot('starting-grid',this.t.grid,[],true);
         content+=slot('replay',this.t.replay,[module('replay','',{display:'compact'})],true);
@@ -55,6 +58,11 @@ export const f1DossierMethods={
       // Independent season data remains usable if F1 Sensor's cards cannot load.
       if(['home','championship','schedule','results'].includes(this.view))content+=`<details class="source-details f1-independent"><summary>Jolpica · ${escapeHtml(this.t.seasonOverview)}</summary>${this._f1Fallback(f1)}</details>`;
     }else content=`${data?`<p class="notice">${escapeHtml(this.t.f1Setup)} <a href="https://nicxe.github.io/f1_sensor/" target="_blank" rel="noopener noreferrer">F1 Sensor ↗</a></p>`:''}${this._f1Fallback(f1)}${this.view==='home'?this._dossierSection(this.t.news,this._news(data,4),'view','news'):''}`;
+    if(!native&&!this.hideScores){
+      const resultSlots=['qualifying','results'].includes(this.view)?slot('qualifying',this.t.qualifying,[],true):'';
+      const gridSlot=['home','grid','results'].includes(this.view)?slot('starting-grid',this.t.grid,[],true):'';
+      content=`<div class="f1-grid">${resultSlots}${gridSlot}</div>`+content;
+    }
     return header+content;
   },
   _f1Fallback(f1){
@@ -71,19 +79,19 @@ export const f1DossierMethods={
   },
   async _mountF1(){
     const specs=this._f1Specs,profile=this.activeDashboard,data=profile&&this._dossierData(profile),bridge=data?.bridge;
-    if(!specs||!bridge?.available||!this.shadowRoot.querySelector('[data-f1-slot]')){this._nativeCards=new Map();return;}
+    if(!specs||!this.shadowRoot.querySelector('[data-f1-slot]')){this._nativeCards=new Map();return;}
     const generation=this._f1Generation=(this._f1Generation||0)+1;
     this._nativeCards||=new Map();
     const current=new Map();
     try{
-      if(!customElements.get('f1-sensor-card'))await import('/local/f1-sensor-live-data-card/register.js?legacy=0');
+      if(bridge?.available&&Object.keys(specs).some(id=>!['starting-grid','qualifying'].includes(id))&&!customElements.get('f1-sensor-card')){try{await import('/local/f1-sensor-live-data-card/register.js?legacy=0');}catch{/* Public results remain usable if optional native modules fail to load. */}}
       if(specs.circle&&!customElements.get('f1-circle-of-doom-card'))await import(new URL('./vendor/f1-circle-of-doom-card.js',import.meta.url));
       if(generation!==this._f1Generation||!this.isConnected)return;
       for(const [id,spec] of Object.entries(specs)){
         const slot=this.shadowRoot.querySelector(`[data-f1-slot="${id}"]`);if(!slot)continue;
         try{
-          const circle=id==='circle',startingGrid=id==='starting-grid',entities=bridge.entities||{};
-          const config=startingGrid?{entry_id:bridge.entry_id,compact:this.view==='home'}:circle?{type:'custom:f1-circle-of-doom-card',title:'Circle of Doom',entity:entities.driver_positions,session_entity:entities.current_session,session_status_entity:entities.session_status,track_status_entity:entities.track_status,uncertainty:2,stale_after:90}:f1CardConfig(spec.title,spec.modules,bridge.entry_id,spec.live);
+          const circle=id==='circle',startingGrid=['starting-grid','qualifying'].includes(id),entities=bridge?.entities||{};
+          const config=startingGrid?{entry_id:bridge?.cards_enabled?bridge.entry_id:null,compact:this.view==='home',mode:id==='qualifying'?'qualifying':'grid',weekend:data?.f1?.weekend}:circle?{type:'custom:f1-circle-of-doom-card',title:'Circle of Doom',entity:entities.driver_positions,session_entity:entities.current_session,session_status_entity:entities.session_status,track_status_entity:entities.track_status,uncertainty:2,stale_after:90}:f1CardConfig(spec.title,spec.modules,bridge.entry_id,spec.live);
           const signature=JSON.stringify(config),old=this._nativeCards.get(id);
           const card=old?.signature===signature?old.card:document.createElement(startingGrid?'sports-hub-starting-grid':circle?'f1-circle-of-doom-card':'f1-sensor-card');
           if(card!==old?.card)card.setConfig(config);

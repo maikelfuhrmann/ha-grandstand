@@ -16,4 +16,4 @@ export function clubForm(events,target){
     return {event:e,result:own.winner===true?'W':other.winner===true?'L':a>b?'W':a<b?'L':'D'};
   }).filter(Boolean).slice(0,5).reverse();
 }
-export function dossierTabs(profile){return profile?.target==='racing:f1'?['home','live','championship','schedule','results','raceControl','strategy','news']:['home','live','schedule','results','tables','competitionsTab',...(profile?.kind==='team'?['squad']:[]),'news'];}
+export function dossierTabs(profile){return profile?.target==='racing:f1'?['home','live','qualifying','grid','championship','schedule','results','raceControl','strategy','news']:['home','live','schedule','results','tables','competitionsTab',...(profile?.kind==='team'?['squad']:[]),'news'];}
