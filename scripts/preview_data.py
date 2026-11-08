@@ -18,6 +18,6 @@ for league in LEAGUES.values():
     normalized=normalize_scoreboard(json.loads(path.read_text()),league,start,end) if path.exists() else []
     events.extend({**event,'stale':False,'updated_at':now} for event in normalized)
     leagues.append({**league,'event_count':len(normalized),'live_count':sum(e['state']=='live' for e in normalized),'error':None,'partial':False,'loading':False,'updated_at':now})
-data={'events':events,'leagues':leagues,'sports':[{'id':key,'name':v[0],'name_de':v[1],'icon':v[2]} for key,v in SPORTS.items()],'time_zone':'Europe/Berlin','generated_at':now,'window_start':start.isoformat(),'window_end':end.isoformat(),'version':'0.3.0','loading':False}
+data={'events':events,'leagues':leagues,'sports':[{'id':key,'name':v[0],'name_de':v[1],'icon':v[2]} for key,v in SPORTS.items()],'time_zone':'Europe/Berlin','generated_at':now,'window_start':start.isoformat(),'window_end':end.isoformat(),'version':'0.3.1','loading':False}
 (ROOT/'docs/live-data.json').write_text(json.dumps(data))
 print(f'{len(leagues)} leagues, {len(events)} competitions normalized')
