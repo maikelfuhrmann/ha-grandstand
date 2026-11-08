@@ -50,7 +50,7 @@ export const dossierMethods={
       const leagues=[...new Map(events.map(e=>[e.league_id,e.league])).entries()];
       body=`<div class="dossier-heading"><div><h1>${escapeHtml(profile.name)}</h1><p class="meta">${escapeHtml(this.t.seasonHint)}</p></div><select id="dossier-league" aria-label="${escapeHtml(this.t.leagues)}"><option value="all">${escapeHtml(this.t.allLeagues)}</option>${leagues.map(([id,name])=>`<option value="${escapeHtml(id)}" ${id===this._dossierLeague?'selected':''}>${escapeHtml(name)}</option>`).join('')}</select></div>${filtered.length?filtered.slice(0,this.limit||24).map(e=>this._fixture(e,profile)).join(''):this._dossierEmpty()}${filtered.length>this.limit?`<button class="cta" data-action="more">${escapeHtml(this.t.more)}</button>`:''}`;
     }
-    return `${state}<div class="dossier-controls"><span class="meta">${escapeHtml(this.t.seasonSchedule)}</span><button class="spoiler" data-action="spoiler" aria-pressed="${this.hideScores}">${escapeHtml(this.hideScores?this.t.show:this.t.hide)}</button></div>${body}${this._sourceSummary(data)}`;
+    return `${state}${cache?.error&&data?`<p class="alert">${escapeHtml(this.t.richError)}</p>`:''}<div class="dossier-controls"><span class="meta">${escapeHtml(this.t.seasonSchedule)}</span><button class="spoiler" data-action="spoiler" aria-pressed="${this.hideScores}">${escapeHtml(this.hideScores?this.t.show:this.t.hide)}</button></div>${body}${this._sourceSummary(data)}`;
   },
   _fixture(event,profile){
     const home=event.participants.find(p=>p.home_away==='home')||event.participants[0],away=event.participants.find(p=>p.home_away==='away')||event.participants[1];
