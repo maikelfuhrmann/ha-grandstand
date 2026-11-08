@@ -15,7 +15,14 @@ export function shiftDate(key, days) {
 }
 
 export function isFavorite(event, favorites) {
-  return event.participants.some(p => p.key && favorites.includes(p.key));
+  return favorites.includes(`league:${event.league_id}`) || event.participants.some(p => p.key && favorites.includes(p.key));
+}
+
+export function searchMatches(values, search) {
+  const normalize = value => String(value ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase().replace(/münchen|munchen|muenchen/g,'munich').replace(/köln|koln|koeln/g,'cologne');
+  const tokens=normalize(search).split(/[^\p{L}\p{N}]+/u).filter(t=>t&&!['fc','cf','sc','afc','ac','club'].includes(t));
+  const haystack=normalize(values.join(' '));
+  return tokens.every(token=>haystack.includes(token));
 }
 
 export function isFreshLive(event, now = Date.now()) {
@@ -23,11 +30,11 @@ export function isFreshLive(event, now = Date.now()) {
 }
 
 export function filterEvents(events, {view = 'home', sport = 'all', league = 'all', search = '', date, timeZone = 'UTC', favorites = [], now = Date.now()} = {}) {
-  const query = search.toLocaleLowerCase().trim();
+  const query = String(search ?? '').trim();
   return events.filter(e => {
     if (sport !== 'all' && e.sport !== sport) return false;
     if (league !== 'all' && e.league_id !== league) return false;
-    if (query && ![e.name, e.league, ...e.participants.map(p => p.name)].join(' ').toLocaleLowerCase().includes(query)) return false;
+    if (query && !searchMatches([e.name, e.league, ...e.participants.flatMap(p => [p.name,p.short_name,p.abbreviation])],query)) return false;
     if (view === 'live') return isFreshLive(e, now);
     if (view === 'favorites' && !isFavorite(e, favorites)) return false;
     if (view === 'results' && e.state !== 'finished') return false;
