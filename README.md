@@ -49,7 +49,7 @@ This is a custom repository; inclusion in the default marketplace catalog is not
 
 ### Manual installation
 
-Download the `ha-sports-hub-0.4.0.zip` release asset and extract it into your HA configuration directory. The resulting path must be:
+Download the `ha-sports-hub-0.4.1.zip` release asset and extract it into your HA configuration directory. The resulting path must be:
 
 ```text
 config/custom_components/sports_hub/manifest.json
@@ -72,6 +72,8 @@ Personal and shared dashboards fetch additional season information independently
 Search for a team (for example, **FC Bayern**) or mark a team/league as a favorite. Grandstand prepares a preview with its logo and available provider colors. Review the name and colors, then select **Approve dashboard**. Choosing **Later** keeps the favorite without creating a dashboard. Pending suggestions are available under **Dashboards**.
 
 Approved dashboards live under **Grandstand → Dashboards**, are stored on the HA server for your signed-in user, and follow you across browsers/devices. They load a richer dossier on demand: published season fixtures and results across competitions, full standings, form from the last five matches, league/cup progress, season totals and home/away splits, squad, home venue, and news. Availability varies by sport and provider. Existing approved dashboards automatically receive the richer layout after updating; no new approval is needed.
+
+When club metadata omits the home stadium, Grandstand uses the latest played regular league home fixture, or the next scheduled one before any have been played. Friendlies, cup ties, away games, neutral venues and unknown neutral-site flags cannot supply this fallback. The event weather radar independently follows the actual match venue.
 
 Administrators can also check **Also show in the Home Assistant sidebar** before approval. This creates a separate, automatically managed Grandstand panel with its own URL and sidebar entry. **Shared sidebar dashboards are visible to all HA users**; the approval dialog explains this. They are custom panels, not editable Lovelace/YAML dashboards. Removing a personal dashboard leaves a published sidebar panel intact; administrators can remove that separately under **Dashboards**.
 
