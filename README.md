@@ -18,7 +18,7 @@ Install one integration, choose your competitions, and open **Sports Hub** in th
 - Full-season club schedules, league tables, cup fixtures, recent form, season statistics, squad and venue details.
 - Club and league news with publisher, publication time and links to the original articles.
 - **Match center** with key events/play-by-play, published starting lineups and substitutes, team-stat comparisons and player box scores.
-- **Formula 1 hub** with race weekend, championship, calendar, results and news; optional F1 Sensor live timing, Race Control, weather, documents, tyre strategy and Circle of Doom.
+- **Formula 1 hub** with race weekend, championship, calendar, results and news; optional F1 Sensor live timing, Race Control, weather, documents, tyre strategy and Circle of Doom, including lapped traffic recovered from numeric intervals.
 - **Spoiler protection** for scores, records, winners, standings, form, news and analysis, with per-event score reveal.
 - HA timezone-aware dates, including overnight US games and daylight-saving transitions.
 - Four compact sensors for automations: live events, scheduled events, competitions, and source errors.
@@ -43,7 +43,7 @@ This is a custom repository; inclusion in the default marketplace catalog is not
 
 ### Manual installation
 
-Download the `ha-sports-hub-0.3.4.zip` release asset and extract it into your HA configuration directory. The resulting path must be:
+Download the `ha-sports-hub-0.3.5.zip` release asset and extract it into your HA configuration directory. The resulting path must be:
 
 ```text
 config/custom_components/sports_hub/manifest.json
@@ -86,7 +86,7 @@ Approve **Formula 1** as a league dashboard to get dedicated Overview, Live, Cha
 - **Without additional integrations:** [Jolpica](https://api.jolpi.ca/ergast/) supplies the published season calendar, session times, driver/constructor standings and latest race classification. News comes through the same localized news adapter as other dossiers.
 - **With [F1 Sensor](https://nicxe.github.io/f1_sensor/) installed:** Sports Hub discovers the loaded entry and uses its bundled modular cards. Enable F1 Sensor's dashboard cards in its options. No entry IDs or entity names need to be copied manually. If several F1 Sensor entries are loaded, the first loaded entry is used.
 - Dedicated **Qualifying** and **Starting grid** tabs show the selected race weekend. Qualifying includes Q1/Q2/Q3, the top three and the separate published grid position. Official Formula1.com result tables supplement Jolpica when its segment times are missing. Published starting grids take precedence over provisional qualifying order; the source, update time, penalty notes and position changes remain visible. Between weekends the last results remain accessible, with the meeting and season identified.
-- The **staggered starting grid** offers a **Drivers / Cars** switch, with real 2026 driver portraits (default) or team car images from Formula1.com. Missing portraits use a neutral silhouette; missing car images use a schematic car. The view preference is saved per HA user in this browser. Images are matched by driver name and season, never just by number. Unknown teams and other seasons never borrow the wrong livery. These are team publicity images, not live camera views or a guarantee of race-specific liveries. Image rights remain with Formula 1 and the respective owners; assets are remotely loaded and not included in this repository's MIT license.
+- The **staggered starting grid** offers a **Portrait / Full body / Cars** switch. Portrait is the default: a matching official headshot from the optional F1 Sensor Driver list entity, or a close crop of the official 2026 driver photo. Full body and team car images are available from Formula1.com. Missing portraits use a neutral silhouette; missing car images use a schematic car. The view preference is saved per HA user in this browser. Enable **Driver list (live)** in F1 Sensor to expose its optional headshot URLs. Images require a matching person and season. Images are matched by driver name and season, never just by number. Unknown teams and other seasons never borrow the wrong livery. These are team publicity images, not live camera views or a guarantee of race-specific liveries. Image rights remain with Formula 1 and the respective owners; assets are remotely loaded and not included in this repository's MIT license.
 - Public qualifying/grid results work without F1TV or F1 Sensor. When F1 Sensor is installed, its protected starting-grid channel remains available and its spoiler blocking is respected. Sports Hub's spoiler toggle hides both views. Pit-lane starts and unknown positions stay separate; pole side and spacing are schematic.
 - The live views include timing, weather, Race Control, tyres, results/grid, championship progression, FIA documents and investigations. The live track-map panel is omitted from this public-timing dashboard; the static circuit overview remains available. The Live tab places **Circle of Doom** below the race status and above live timing, and the Strategy tab also embeds it when the driver-position entity is available. Existing F1 Sensor and Circle of Doom installations are reused. Circle of Doom intentionally retains its English interface.
 - Public timing does not require F1TV. **Live car positions, team radio and detailed pit-stop data are not guaranteed without the additional authorized access required by F1 Sensor.** Sports Hub does not provide or bypass that access. No synthetic car positions or race-control messages are generated.
@@ -140,4 +140,4 @@ For an offline UI preview, serve this repository using `python3 -m http.server 8
 
 If Sports Hub is useful to you, you can [support development via PayPal](https://paypal.me/maikeltimo).
 
-MIT licensed. The bundled `frontend/vendor/f1-circle-of-doom-card.js` is version 0.2.3 from [ha-f1-circle-of-doom-card](https://github.com/maikelfuhrmann/ha-f1-circle-of-doom-card), also MIT licensed; its license is included alongside the file. F1 Sensor cards are loaded from the user’s installed integration and are not redistributed. Issues and pull requests are welcome.
+MIT licensed. The bundled `frontend/vendor/f1-circle-of-doom-card.js` is version 0.3.0 from [ha-f1-circle-of-doom-card](https://github.com/maikelfuhrmann/ha-f1-circle-of-doom-card), also MIT licensed; its license is included alongside the file. F1 Sensor cards are loaded from the user’s installed integration and are not redistributed. Issues and pull requests are welcome.
