@@ -6,6 +6,7 @@ import math
 from xml.etree import ElementTree
 
 from .catalog import LEAGUES
+from .venue import coordinates
 from .model import normalize_scoreboard, normalize_competitor, safe_url, text, parse_time
 
 
@@ -50,7 +51,7 @@ def normalize_schedule(payload, fallback, team_id=None):
         league_info=raw.get('league') or next(iter(payload.get('leagues') or []),{})
         slug=league_info.get('slug')
         league=LEAGUES.get(f"{fallback['sport']}:{slug}") or ({**fallback,'id':f"{fallback['sport']}:{slug}",'path':slug,'name':text(league_info.get('shortName') or league_info.get('name'))} if isinstance(slug,str) and re.fullmatch(r'[a-z0-9._-]{1,80}',slug) else fallback)
-        for event in normalize_scoreboard({'events':[raw]},league,datetime(2000,1,1,tzinfo=timezone.utc),datetime(2100,1,1,tzinfo=timezone.utc)):
+        for event in normalize_scoreboard({'events':[raw],'leagues':[league_info]},league,datetime(2000,1,1,tzinfo=timezone.utc),datetime(2100,1,1,tzinfo=timezone.utc)):
             # Team schedules omit UIDs. Reconcile using provider team IDs at merge time.
             if team_id and not any(p['id']==team_id for p in event['participants']):continue
             season_type=raw.get('seasonType') or {}
@@ -115,7 +116,7 @@ def normalize_f1(calendar, drivers, constructors, results):
             if s and s.get('date'):sessions.append({'name':label,'date':s['date']+'T'+s.get('time','00:00:00Z'),'time_confirmed':bool(s.get('time'))})
         sessions.append({'name':'Race','date':r['date']+'T'+r.get('time','00:00:00Z'),'time_confirmed':bool(r.get('time'))})
         c=r.get('Circuit') or {};location=c.get('Location') or {}
-        races.append({'round':r.get('round'),'name':text(r.get('raceName')),'date':sessions[-1]['date'],'sessions':sorted(sessions,key=lambda x:x['date']),'circuit_id':text(c.get('circuitId')),'circuit':text(c.get('circuitName')),'locality':text(location.get('locality')),'country':text(location.get('country')),'url':safe_url(r.get('url'))})
+        races.append({'round':r.get('round'),'name':text(r.get('raceName')),'date':sessions[-1]['date'],'sessions':sorted(sessions,key=lambda x:x['date']),'circuit_id':text(c.get('circuitId')),'location':{'name':text(c.get('circuitName')),'city':text(location.get('locality')),'country':text(location.get('country')),'source':'Jolpica',**(coordinates(location.get('lat'),location.get('long')) or {})},'circuit':text(c.get('circuitName')),'locality':text(location.get('locality')),'country':text(location.get('country')),'url':safe_url(r.get('url'))})
     ds=[];cs=[]
     for table in mr(drivers,'StandingsTable').get('StandingsLists',[]):
         for row in table.get('DriverStandings',[]):

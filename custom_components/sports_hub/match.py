@@ -6,6 +6,7 @@ import probatio as vol
 from homeassistant.components import websocket_api
 
 from .catalog import LEAGUES
+from .venue import venue_location, resolve_venue
 from .const import API_ROOT, DOMAIN
 from .enrichment_model import numeric, public_link
 from .model import normalize_competitor, normalize_scoreboard, parse_time, safe_url, text
@@ -68,7 +69,7 @@ def normalize_match(payload, league, event_id):
     info=payload.get('gameInfo') or {};venue=info.get('venue') or {}
     event_raw={**header,'id':event_id,'date':comp.get('date') or header.get('date'),'competitions':[comp]}
     normalized=normalize_scoreboard({'events':[event_raw]},league,datetime(2000,1,1,tzinfo=timezone.utc),datetime(2100,1,1,tzinfo=timezone.utc)) if comp else []
-    return {'event_id':event_id,'state':state,'event':normalized[0] if normalized else None,'teams':sorted(teams,key=lambda t:t['team']['home_away']!='home'),'lineups':sorted(lineups,key=lambda l:l['team']['home_away']!='home'),'player_tables':player_tables,'timeline':timeline[:200],'timeline_kind':'key_events' if payload.get('keyEvents') else 'scoring' if not payload.get('plays') and not drive_plays and payload.get('scoringPlays') else 'plays','stats_scope':'season' if state=='scheduled' else 'match','venue':text(venue.get('fullName'),120),'city':text((venue.get('address') or {}).get('city'),80),'attendance':numeric(info.get('attendance')),'officials':[text(o.get('displayName') or o.get('fullName'),100) for o in info.get('officials',[])[:8]],'url':public_link(header.get('links'))}
+    return {'event_id':event_id,'state':state,'event':normalized[0] if normalized else None,'teams':sorted(teams,key=lambda t:t['team']['home_away']!='home'),'lineups':sorted(lineups,key=lambda l:l['team']['home_away']!='home'),'player_tables':player_tables,'timeline':timeline[:200],'timeline_kind':'key_events' if payload.get('keyEvents') else 'scoring' if not payload.get('plays') and not drive_plays and payload.get('scoringPlays') else 'plays','stats_scope':'season' if state=='scheduled' else 'match','location':venue_location(venue),'venue':text(venue.get('fullName'),120),'city':text((venue.get('address') or {}).get('city'),80),'attendance':numeric(info.get('attendance')),'officials':[text(o.get('displayName') or o.get('fullName'),100) for o in info.get('officials',[])[:8]],'url':public_link(header.get('links'))}
 
 
 @websocket_api.websocket_command({'type':'sports_hub/match','league_id':str,'event_id':str})
@@ -90,6 +91,7 @@ async def websocket_match(hass,connection,msg):
     now=datetime.now(timezone.utc);start=parse_time((result.get('event') or {}).get('date'))
     near_start=start and abs((now-start).total_seconds())<5400
     if not item['error'] and result['state']!='live' and not near_start:item['expires']=(parse_time(item['updated_at']) or now)+timedelta(minutes=15)
+    result['radar']={'event_name':(result.get('event') or {}).get('name',''),'location':await resolve_venue(provider,result.get('location'))}
     result.update(updated_at=item['updated_at'],stale=item['error'])
     if result['event']:result['event'].update(updated_at=item['updated_at'],stale=item['error'])
     connection.send_result(msg['id'],result)

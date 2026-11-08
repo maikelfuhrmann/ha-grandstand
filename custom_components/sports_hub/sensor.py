@@ -22,8 +22,8 @@ class SportsHubSensor(CoordinatorEntity, SensorEntity):
         self._attr_unique_id = f"{entry.entry_id}_{key}"
         self._attr_translation_key = key
         self._attr_device_info = {
-            "identifiers": {(DOMAIN, entry.entry_id)}, "name": "Sports Hub",
-            "manufacturer": "Sports Hub", "model": "Multi-sport dashboard", "sw_version": VERSION,
+            "identifiers": {(DOMAIN, entry.entry_id)}, "name": "Grandstand",
+            "manufacturer": "Grandstand", "model": "Multi-sport dashboard", "sw_version": VERSION,
         }
 
     @property

@@ -8,6 +8,7 @@ from xml.etree.ElementTree import ParseError
 import aiohttp
 
 from .catalog import LEAGUES
+from .venue import resolve_venue
 from .const import API_ROOT, VERSION
 from .enrichment_model import normalize_table, normalize_schedule, normalize_team, normalize_roster, normalize_news_xml, normalize_news_espn, normalize_f1
 from .model import parse_time
@@ -149,7 +150,10 @@ class EnrichmentProvider:
         for comp,table in rows:
             if comp:competitions.append(comp)
             if table and table['groups']:tables.append(table);sources.append({'name':'ESPN · '+table['name'],'updated_at':table['updated_at'],'stale':table['stale']})
-        return {'key':profile['key'],'kind':'team' if team_id else 'league','primary_league':league['id'],'team':info,'events':events,'roster':roster,'tables':tables,'competitions':competitions,'news':news,'sources':sources,'generated_at':datetime.now(timezone.utc).isoformat()}
+        now=datetime.now(timezone.utc)
+        focus=next((e for e in events if e['state']=='live'),None) or next((e for e in events if e['state']=='scheduled' and (parse_time(e['date']) or now)>=now),None)
+        radar={'event_id':focus['id'],'event_name':focus['name'],'location':await resolve_venue(self,focus.get('location'))} if focus else None
+        return {'radar':radar,'key':profile['key'],'kind':'team' if team_id else 'league','primary_league':league['id'],'team':info,'events':events,'roster':roster,'tables':tables,'competitions':competitions,'news':news,'sources':sources,'generated_at':datetime.now(timezone.utc).isoformat()}
 
     async def f1(self,profile,lang):
         base='https://api.jolpi.ca/ergast/f1/current'
@@ -157,6 +161,8 @@ class EnrichmentProvider:
         data=normalize_f1(*(i['data'] for i in items))
         weekend,news=await asyncio.gather(self.f1_weekend(data),self.news('Formula 1',lang,LEAGUES['racing:f1']))
         data['weekend']=weekend
+        race=select_weekend(data['calendar'])
+        data['radar']={'event_name':race['name'],'location':race.get('location')} if race else None
         return {'key':profile['key'],'kind':'f1','f1':data,'events':[],'news':news,'sources':[{'name':'Jolpica · '+label,'updated_at':i['updated_at'],'stale':i['error']} for label,i in zip(['Calendar','Drivers','Constructors','Results'],items)]+weekend.get('sources',[]),'generated_at':datetime.now(timezone.utc).isoformat()}
 
     async def f1_weekend(self,data):

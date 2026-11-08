@@ -5,6 +5,7 @@ Each competition becomes an event, including tennis matches and UFC undercards.
 """
 
 from datetime import datetime, timezone
+from .venue import venue_location
 from urllib.parse import urlparse
 import re
 
@@ -142,14 +143,14 @@ def normalize_scoreboard(payload, league, start, end):
             key = f"{league['id']}:{event.get('id', '')}:{comp.get('id', '')}"
             result[key] = {
                 "id": key, "league_id": league["id"], "sport": league["sport"],
-                "league": league["name"], "name": text(name),
+                "league": league["name"], "league_logo": league_branding(payload)["logo"] or safe_url(league.get("logo")), "name": text(name),
                 "subtitle": text(comp_type.get("text") or comp_type.get("abbreviation") or (notes[0].get("headline") if notes else "")),
                 "date": date.isoformat(), "end_date": end_date.isoformat() if end_date else None,
                 "time_confirmed": comp.get("timeValid", True) and not comp.get("startTimeTBD", False),
                 "state": state, "status": text(kind.get("shortDetail") or kind.get("detail") or kind.get("description"), 120),
                 "clock": text(status.get("displayClock"), 20), "period": status.get("period"),
                 "participants": participants, "format": "leaderboard" if is_table else "match",
-                "venue": text(venue.get("fullName") or venue.get("name"), 120), "url": link,
+                "venue": text(venue.get("fullName") or venue.get("name"), 120), "location": venue_location(venue), "url": link,
             }
     return sorted(result.values(), key=lambda e: (e["date"], e["id"]))
 

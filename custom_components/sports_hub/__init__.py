@@ -8,7 +8,7 @@ from homeassistant.core import callback
 from homeassistant.exceptions import ConfigEntryNotReady
 
 from .catalog import SPORTS
-from .const import DOMAIN, PANEL_NAME, PANEL_PATH, STATIC_PATH, VERSION
+from .const import DOMAIN, PANEL_NAME, PANEL_PATH, STATIC_PATH, VERSION, BRAND_NAME
 from .coordinator import SportsHubCoordinator
 from .context import setup_context
 from .dashboards import DashboardManager, DATA_KEY, websocket_dashboards
@@ -33,6 +33,8 @@ async def async_setup(hass, config):
 async def async_setup_entry(hass, entry):
     if frontend.async_panel_exists(hass, PANEL_PATH):
         raise ConfigEntryNotReady("The /sports-hub URL is already in use. Rename the existing panel first.")
+    if entry.title == "Sports Hub":
+        hass.config_entries.async_update_entry(entry, title=BRAND_NAME)
     coordinator = SportsHubCoordinator(hass, entry)
     # Partial source failures remain visible in the dashboard rather than preventing setup.
     await coordinator.async_config_entry_first_refresh()
@@ -41,7 +43,7 @@ async def async_setup_entry(hass, entry):
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     await panel_custom.async_register_panel(
         hass, frontend_url_path=PANEL_PATH, webcomponent_name=PANEL_NAME,
-        sidebar_title="Sports Hub", sidebar_icon="mdi:scoreboard",
+        sidebar_title=BRAND_NAME, sidebar_icon="mdi:scoreboard",
         module_url=f"{STATIC_PATH}/sports-hub.js?v={VERSION}",
         config={"entry_id": entry.entry_id, "version": VERSION},
         require_admin=False,
