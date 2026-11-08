@@ -48,3 +48,14 @@ test('spoiler protection hides standings, headlines and form content',()=>{
   assert.equal(dossierMethods._tables.call(panel,{tables:[{}]},{}),dossierMethods._spoilerNotice.call(panel));
   assert.equal(dossierMethods._news.call(panel,{news:{articles:[{title:'Spoiler'}]}}),dossierMethods._spoilerNotice.call(panel));
 });
+
+import {matchReference,matchMethods} from '../custom_components/sports_hub/frontend/match-center.js';
+import '../custom_components/sports_hub/frontend/match-i18n.js';
+test('match center never mistakes a tournament ID for a tennis or MMA match',()=>{
+ const event={id:'soccer:ger.1:123:123',sport:'soccer',format:'match',league_id:'soccer:ger.1'};
+ assert.equal(matchReference(event).event_id,'123');assert.equal(matchReference({...event,sport:'tennis'}),null);assert.equal(matchReference({...event,sport:'mma'}),null);assert.equal(matchReference({...event,id:'soccer:ger.1:../../bad:123'}),null);
+});
+test('pre-match statistics visibly identify season totals',()=>{
+ const panel={t:words.en};const html=matchMethods._matchStats.call(panel,{stats_scope:'season',teams:[{team:{name:'A'},stats:[{key:'totalGoals',label:'Goals',display:'15',value:15}]},{team:{name:'B'},stats:[{key:'totalGoals',label:'Goals',display:'14',value:14}]}]});
+ assert.ok(html.includes(words.en.preMatchStats));assert.ok(html.includes('15'));
+});
