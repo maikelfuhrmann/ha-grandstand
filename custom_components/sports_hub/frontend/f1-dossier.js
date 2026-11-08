@@ -17,6 +17,7 @@ export const f1DossierMethods={
     const control=limit=>module('race_control',this.t.raceControl,{limit,order:'newest',list_max_height:600,show_clear_button:false});
     let content='';
     const header=`<div class="dossier-heading f1-heading"><div><div class="eyebrow">FORMULA 1 · ${escapeHtml(f1.season||'')}</div><h1>${escapeHtml(profile.name)}</h1></div>${this._hass?.panels?.['dashboard-f1']?`<a class="cta" href="/dashboard-f1">${escapeHtml(this.t.nativeF1)} ↗</a>`:''}</div><div class="dossier-controls"><span class="meta">${escapeHtml(this.t.f1Access)}</span><button class="spoiler" data-action="spoiler" aria-pressed="${this.hideScores}">${escapeHtml(this.hideScores?this.t.show:this.t.hide)}</button></div>`;
+    if(this.view==='weatherRadar')return header+this._radar(f1.radar,'f1');
     if(this.view==='news')return header+this._dossierSection(this.t.news,this._news(data));
     if(this.hideScores&&!['home','schedule'].includes(this.view))return header+this._spoilerNotice();
     if(native){
@@ -54,7 +55,7 @@ export const f1DossierMethods={
         content+=slot('tyres',this.t.tyres,[module('tyres','',{content:'current',rows:22})],false,true);
         content+=slot('pits',this.t.pitStops,[module('pit_stops','',{rows:22})],false,true);
       }
-      content=`<div class="f1-grid">${content}</div>`;
+      content=`<div class="f1-grid ${this.view==='live'?'live-layout':''}">${content}</div>`;
       if(this.view==='home')content+=this._dossierSection(this.t.news,this._news(data,4),'view','news');
       // Independent season data remains usable if F1 Sensor's cards cannot load.
       if(['home','championship','schedule','results'].includes(this.view))content+=`<details class="source-details f1-independent"><summary>Jolpica · ${escapeHtml(this.t.seasonOverview)}</summary>${this._f1Fallback(f1)}</details>`;
@@ -64,6 +65,7 @@ export const f1DossierMethods={
       const gridSlot=['home','grid','results'].includes(this.view)?slot('starting-grid',this.t.grid,[],true):'';
       content=`<div class="f1-grid">${resultSlots}${gridSlot}</div>`+content;
     }
+    if(['home','live','schedule','strategy'].includes(this.view))content+=this._radar(f1.radar,'f1');
     return header+content;
   },
   _f1Fallback(f1){
@@ -96,7 +98,7 @@ export const f1DossierMethods={
           const signature=JSON.stringify(config),old=this._nativeCards.get(id);
           const card=old?.signature===signature?old.card:document.createElement(startingGrid?'sports-hub-starting-grid':circle?'f1-circle-of-doom-card':'f1-sensor-card');
           if(card!==old?.card)card.setConfig(config);
-          card.hass=this._hass;slot.replaceChildren(card);current.set(id,{card,signature});
+          card.hass=this._hass;if(slot.firstElementChild!==card)slot.replaceChildren(card);current.set(id,{card,signature});
         }catch{slot.innerHTML=`<p class="notice">${escapeHtml(this.t.f1CardError)}</p>`;}
       }
       this._nativeCards=current;

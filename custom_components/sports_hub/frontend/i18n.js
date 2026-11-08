@@ -30,3 +30,10 @@ Object.assign(words.es,{"gridHeadshots": "Retrato", "gridFullBody": "Cuerpo ente
 Object.assign(words.fr,{"gridHeadshots": "Portrait", "gridFullBody": "En pied", "gridHeadshotNote": "Photo du visage si disponible ; sinon, un cadrage rapproché de la photo officielle."});
 Object.assign(words.it,{"gridHeadshots": "Ritratto", "gridFullBody": "Figura intera", "gridHeadshotNote": "Foto del volto se disponibile; altrimenti un ritaglio ingrandito della foto ufficiale."});
 Object.assign(words.nl,{"gridHeadshots": "Portret", "gridFullBody": "Volledig", "gridHeadshotNote": "Gezichtsportret indien beschikbaar; anders een close-up van de officiële coureursfoto."});
+
+Object.assign(words.en,{"communityProject": "Made for sports fans. Powered by community."});
+Object.assign(words.de,{"communityProject": "Für Sportfans. Von der Community getragen."});
+Object.assign(words.es,{"communityProject": "Para aficionados. Con el apoyo de la comunidad."});
+Object.assign(words.fr,{"communityProject": "Pour les fans. Soutenu par la communauté."});
+Object.assign(words.it,{"communityProject": "Per gli appassionati. Sostenuto dalla community."});
+Object.assign(words.nl,{"communityProject": "Voor sportfans. Gedragen door de community."});
