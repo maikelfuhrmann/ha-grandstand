@@ -109,7 +109,7 @@ test('car assets are season-scoped and do not confuse the two Red Bull teams',()
  assert.equal(f1CarAsset('McLaren',2027),null);assert.equal(f1CarAsset('Unknown',2026),null);
 });
 
-import {f1DriverAsset} from '../custom_components/sports_hub/frontend/f1-results-model.js';
+import {f1DriverAsset,f1HeadshotAsset} from '../custom_components/sports_hub/frontend/f1-results-model.js';
 test('F1 portraits match verified people and season, including localized name accents',()=>{
  assert.match(f1DriverAsset('Lando Norris',2026).url,/mclaren\/lannor01/);
  assert.match(f1DriverAsset('Rafael Câmara',2026).url,/rafcam01/);
@@ -118,4 +118,17 @@ test('F1 portraits match verified people and season, including localized name ac
  assert.equal(f1DriverAsset('Lando Norris',2025),null);
  assert.equal(f1DriverAsset('Unknown Driver',2026),null);
  assert.equal(f1DriverAsset('1',2026),null);
+});
+
+test('headshots prefer matching official season and identity, otherwise use a portrait crop',()=>{
+ const url='https://media.formula1.com/image/upload/common/f1/2026/mclaren/lannor01/headshot.webp';
+ const ds=[{name:'Lando NORRIS',headshot_large:url}];
+ assert.deepEqual(f1HeadshotAsset('Lando Norris',2026,ds),{url,cropped:false});
+ assert.equal(f1HeadshotAsset('Lando Norris',2026,[]).cropped,true);
+ assert.equal(f1HeadshotAsset('Lando Norris',2026,[{name:'Lando Norris',headshot_large:'javascript:alert(1)'}]).cropped,true);
+ assert.equal(f1HeadshotAsset('Lando Norris',2026,[{name:'Lando Norris',headshot_large:url.replace('2026','2025')}]).cropped,true);
+ assert.equal(f1HeadshotAsset('Lando Norris',2026,[{name:'Lando Norris',headshot_large:url.replace('media.formula1.com','example.com')}]).cropped,true);
+ assert.equal(f1HeadshotAsset('Oscar Piastri',2026,ds).cropped,true);
+ assert.equal(f1HeadshotAsset('Unknown',2026,ds),null);
+ assert.equal(f1HeadshotAsset('Lando Norris',2025,ds),null);
 });
