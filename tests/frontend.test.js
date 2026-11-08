@@ -59,3 +59,30 @@ test('pre-match statistics visibly identify season totals',()=>{
  const panel={t:words.en};const html=matchMethods._matchStats.call(panel,{stats_scope:'season',teams:[{team:{name:'A'},stats:[{key:'totalGoals',label:'Goals',display:'15',value:15}]},{team:{name:'B'},stats:[{key:'totalGoals',label:'Goals',display:'14',value:14}]}]});
  assert.ok(html.includes(words.en.preMatchStats));assert.ok(html.includes('15'));
 });
+
+import {soccerFormation,startingGridModel} from '../custom_components/sports_hub/frontend/lineup-layout.js';
+const lineup=(formation,roles)=>({formation,players:roles.map((position,i)=>({id:String(i+1),name:'Player '+(i+1),position,starter:true,number:String(i+1)}))});
+test('football pitch respects 4-2-3-1 roles, left/right orientation and goalkeeper',()=>{
+ const rows=soccerFormation(lineup('4-2-3-1',['G','CD-L','CD-R','LB','RB','AM','LM','RM','F','AM-L','AM-R']));
+ assert.deepEqual(rows.map(r=>r.map(p=>p.position)),[['F'],['AM-L','AM','AM-R'],['LM','RM'],['LB','CD-L','CD-R','RB'],['G']]);
+});
+test('three-five-two keeps wingbacks in midfield and does not place substitutes on the pitch',()=>{
+ const l=lineup('3-5-2',['G','CD','CD-L','CD-R','CM-L','CM-R','AM','LM','RM','CF-L','CF-R']);l.players.push({id:'bench',position:'G',starter:false});
+ const rows=soccerFormation(l);assert.deepEqual(rows.map(r=>r.length),[2,5,3,1]);assert.deepEqual(rows[1].map(p=>p.position),['LM','CM-L','AM','CM-R','RM']);
+});
+test('missing, duplicate, incomplete and unsupported formations stay as a list',()=>{
+ const l=lineup('4-4-2',['G','LB','CD','CD','RB','LM','CM','CM','RM','CF','CF']);
+ assert.equal(soccerFormation({...l,formation:''}),null);assert.equal(soccerFormation({...l,formation:'4-4-4'}),null);assert.equal(soccerFormation({...l,players:l.players.slice(0,10)}),null);
+ assert.equal(soccerFormation({...l,players:[...l.players.slice(0,10),l.players[1]]}),null);l.players[3].position='unknown';assert.equal(soccerFormation(l),null);
+});
+test('grid preserves published gaps, separates pit lane and never assigns missing positions',()=>{
+ const rows=[{racing_number:'1',grid_position:3},{racing_number:'2',grid_position:1},{racing_number:'3',grid_position:0},{racing_number:'4',grid_position:null},{racing_number:'5',grid_position:''},{racing_number:'6',grid_position:4},{racing_number:'7',grid_position:4},{racing_number:'2',grid_position:9}];
+ const m=startingGridModel({status:'ready',data:{status:'ready',payload:{attributes:{status:'confirmed',grid:rows}}}});
+ assert.deepEqual(m.grid.map(r=>r.position),[1,3]);assert.equal(m.pit[0].id,'3');assert.equal(m.unassigned.length,4);assert.equal(m.status,'confirmed');
+});
+test('grid respects source spoiler blocking and marks interrupted connections stale',()=>{
+ const packet={status:'ready',payload:{attributes:{grid:[{racing_number:'1',grid_position:1}]}}};
+ assert.equal(startingGridModel({status:'ready',data:{...packet,status:'blocked'}}).grid.length,0);
+ assert.equal(startingGridModel({status:'disconnected',data:packet}).stale,true);
+ assert.equal(startingGridModel({status:'ready',data:{...packet,status:'unavailable'}}).grid.length,0);
+});
