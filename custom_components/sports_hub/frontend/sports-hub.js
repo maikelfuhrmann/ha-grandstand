@@ -363,7 +363,6 @@ const f1DossierMethods={
         if(!this.hideScores){content+=slot('compact-wm',this.t.championship,[standings(false,5),standings(true,5)]);content+=slot('last-control',this.t.raceControl,[module('race_control','',{presentation:'latest_message',limit:1,show_clear_button:false})],false,true);}
       }else if(this.view==='live'){
         content+=slot('timing',this.t.timing,[module('overview','',{},['meeting','session','session_status','lap_progress','track_status']),module('timing','',{profile:'auto',rows:22,detail_laps:3})],true,true);
-        content+=slot('map',this.t.trackMap,[{...module('map','',{labels:'code',show_car_markers:true,focus:'highlight',layout_mode:'full',show_footer:true,show_session_info:true,show_lap_progress:true,show_track_status:true,show_driver_count:true},['track_map','map_drivers']),unavailable:'explain'}],false,true);
         content+=slot('live-control',this.t.raceControl,[control(60)],false,true);
         content+=slot('weather',this.t.trackWeather,[module('weather','',{content:'track_conditions',presentation:'metrics'})],false,true);
         content+=slot('live-tyres',this.t.tyres,[module('tyres','',{content:'current',rows:22})],false,true);
