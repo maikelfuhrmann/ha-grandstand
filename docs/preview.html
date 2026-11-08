@@ -11,7 +11,7 @@ const data=await response.json();
 const contexts=await fetch(params.has('live')?'./rich-data.json':'./demo-context.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
 const matches=params.has('live')?await fetch('./match-data.json').then(r=>r.ok?r.json():{}).catch(()=>({})):{};
 let saved=JSON.parse(localStorage.getItem('sports-hub-preview-dashboards')||'{"dashboards":[],"sidebar":[]}');
-panel.panel={config:{entry_id:'preview',version:'0.3.3',preview:true,preview_now:data.generated_at,dashboard:saved.sidebar.find(p=>p.key===params.get('sidebar'))}};
+panel.panel={config:{entry_id:'preview',version:'0.3.4',preview:true,preview_now:data.generated_at,dashboard:saved.sidebar.find(p=>p.key===params.get('sidebar'))}};
 panel.hass={language:params.get('lang')||'de',config:{time_zone:data.time_zone},user:{id:'preview',is_admin:true},panels:{},callWS:async msg=>{
   if(msg.type==='sports_hub/data')return data;
   if(msg.type==='sports_hub/match')return structuredClone(matches[msg.league_id+':'+msg.event_id]||{timeline:[],lineups:[],teams:[],player_tables:[]});
