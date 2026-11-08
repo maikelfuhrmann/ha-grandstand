@@ -43,7 +43,7 @@ This is a custom repository; inclusion in the default marketplace catalog is not
 
 ### Manual installation
 
-Download the `ha-sports-hub-0.3.2.zip` release asset and extract it into your HA configuration directory. The resulting path must be:
+Download the `ha-sports-hub-0.3.3.zip` release asset and extract it into your HA configuration directory. The resulting path must be:
 
 ```text
 config/custom_components/sports_hub/manifest.json
@@ -140,4 +140,4 @@ For an offline UI preview, serve this repository using `python3 -m http.server 8
 
 If Sports Hub is useful to you, you can [support development via PayPal](https://paypal.me/maikeltimo).
 
-MIT licensed. The bundled `frontend/vendor/f1-circle-of-doom-card.js` is version 0.2.1 from [ha-f1-circle-of-doom-card](https://github.com/maikelfuhrmann/ha-f1-circle-of-doom-card), also MIT licensed; its license is included alongside the file. F1 Sensor cards are loaded from the user’s installed integration and are not redistributed. Issues and pull requests are welcome.
+MIT licensed. The bundled `frontend/vendor/f1-circle-of-doom-card.js` is version 0.2.2 from [ha-f1-circle-of-doom-card](https://github.com/maikelfuhrmann/ha-f1-circle-of-doom-card), also MIT licensed; its license is included alongside the file. F1 Sensor cards are loaded from the user’s installed integration and are not redistributed. Issues and pull requests are welcome.
