@@ -142,3 +142,25 @@ test('radar cannot silently use zero or home coordinates for missing venue data'
  for(const p of [null,{}, {latitude:null,longitude:0},{latitude:'',longitude:0},{latitude:true,longitude:0},{latitude:91,longitude:0},{latitude:0,longitude:Infinity}])assert.equal(radarUrl(p),'');
  assert.ok(radarUrl({latitude:0,longitude:0}));
 });
+
+import {personalSections,monthDays,moveMonth} from '../custom_components/sports_hub/frontend/personal-model.js';
+import {personalMethods} from '../custom_components/sports_hub/frontend/personal.js';
+import '../custom_components/sports_hub/frontend/personal-i18n.js';
+test('personal matchday groups fresh live, upcoming and genuine results',()=>{
+ const rows=[base,{...base,id:'past',state:'finished'},{...base,id:'calendar',state:'finished',calendar_only:true},{...base,id:'future',state:'scheduled',date:'2026-11-09T15:00:00Z'}];
+ const groups=personalSections(rows,now,'Europe/Berlin');assert.equal(groups.live.length,1);assert.equal(groups.results.length,1);assert.equal(groups.upcoming.length,1);
+});
+test('calendar has complete Monday-first leap month and year navigation',()=>{
+ const days=monthDays('2028-02');assert.equal(days.length,42);assert.equal(days[0],'2028-01-31');assert.ok(days.includes('2028-02-29'));assert.equal(moveMonth('2026-12',1),'2027-01');assert.equal(moveMonth('2026-01',-1),'2025-12');
+});
+test('offline preference mutation is retained for retry',async()=>{
+ let fail=true,calls=0;const panel={...personalMethods,_hass:{user:{id:'alice'},callWS:async()=>{calls++;if(fail)throw Error('offline');return {favorites:{},settings:{hide_scores:false}};}},_preferenceQueue:[{action:'favorite',key:'league:racing:f1',enabled:true}],_render(){},_applyPreferences(){}};
+ await panel._flushPreferences();assert.equal(panel._preferenceQueue.length,1);assert.equal(panel._preferenceError,true);fail=false;await panel._flushPreferences();assert.equal(panel._preferenceQueue.length,0);assert.equal(panel._preferenceError,false);assert.equal(calls,2);
+});
+test('a response from a previous HA user never applies to another user',async()=>{
+ let finish,applied=false;const panel={...personalMethods,_hass:{user:{id:'alice'},callWS:()=>new Promise(resolve=>{finish=resolve;})},_preferenceQueue:[{action:'favorite',key:'league:racing:f1',enabled:true}],_render(){},_applyPreferences(){applied=true;}};
+ const pending=panel._flushPreferences();panel._hass.user={id:'bob'};finish({favorites:{},settings:{}});await pending;assert.equal(applied,false);
+});
+test('personal UI strings are available in every supported language',()=>{
+ for(const lang of ['en','de','es','fr','it','nl'])for(const key of ['myday','calendar','personalSettings','quietHours','calendarSharedNotice','syncError'])assert.equal(typeof words[lang][key],'string');
+});
