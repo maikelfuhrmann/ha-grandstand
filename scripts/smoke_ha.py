@@ -52,6 +52,19 @@ async def main():
                 assert len(restored.snapshot('test-user')['dashboards'])==1
                 assert restored.snapshot('other-user')['dashboards']==[]
                 print('PASS: approved personal storage, user isolation, independent sidebar panel',flush=True)
+                from custom_components.sports_hub.personal import PERSONAL_KEY
+                from unittest.mock import AsyncMock
+                user=await hass.auth.async_create_user('Calendar Test')
+                personal=hass.data[PERSONAL_KEY]
+                personal.feed=AsyncMock(return_value={'events':[]})
+                assert not hass.states.async_all('calendar')
+                await personal.update(user.id,'settings',{'settings':{'calendar_shared':True}},True)
+                await hass.async_block_till_done()
+                calendars=hass.states.async_all('calendar');assert len(calendars)==1,calendars
+                await personal.update(user.id,'settings',{'settings':{'calendar_shared':False}},True)
+                await hass.async_block_till_done()
+                assert hass.states.get(calendars[0].entity_id).state=='unavailable'
+                print('PASS: explicit calendar opt-in creates entity; revocation clears availability',flush=True)
                 assert await hass.config_entries.async_unload(entry.entry_id)
                 assert not frontend.async_panel_exists(hass,path)
                 assert not frontend.async_panel_exists(hass,'sports-hub')
