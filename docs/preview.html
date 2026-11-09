@@ -4,6 +4,7 @@
 <sports-hub-panel></sports-hub-panel>
 <script type="module">
 await import('../custom_components/sports_hub/frontend/sports-hub.js?preview='+Date.now());
+const {discoverProfiles}=await import('../custom_components/sports_hub/frontend/dashboards.js');
 const panel=document.querySelector('sports-hub-panel');
 const params=new URLSearchParams(location.search);
 let response=await fetch((params.has('live')?'./live-data.json':'./demo-data.json')+'?v='+Date.now());
@@ -11,9 +12,18 @@ const data=await response.json();
 const contexts=await fetch(params.has('live')?'./rich-data.json':'./demo-context.json').then(r=>r.ok?r.json():{}).catch(()=>({}));
 const matches=params.has('live')?await fetch('./match-data.json').then(r=>r.ok?r.json():{}).catch(()=>({})):{};
 let saved=JSON.parse(localStorage.getItem('sports-hub-preview-dashboards')||'{"dashboards":[],"sidebar":[]}');
-panel.panel={config:{entry_id:'preview',version:'0.4.1',preview:true,preview_now:data.generated_at,dashboard:saved.sidebar.find(p=>p.key===params.get('sidebar'))}};
+const demoProfiles=discoverProfiles(data).filter(p=>p.kind==='league').slice(0,3);
+let personal=JSON.parse(localStorage.getItem('grandstand-preview-personal')||'null')||{initialized:true,revision:1,favorites:Object.fromEntries(demoProfiles.map(p=>[p.key,{name:p.name,profile:p}])),settings:{"hide_scores": false, "start_view": "myday", "grid_visual": "portraits", "language": "en", "calendar_shared": false, "reminders_enabled": false, "reminder_minutes": 15, "reminder_device": "", "quiet_enabled": true, "quiet_start": "22:00", "quiet_end": "08:00"},devices:[{id:'demo-device',name:'Demo phone'}]};
+data.version='0.5.0';
+panel.panel={config:{entry_id:'preview',version:'0.5.0',preview:true,preview_now:data.generated_at,dashboard:saved.sidebar.find(p=>p.key===params.get('sidebar'))}};
 panel.hass={language:params.get('lang')||'de',config:{time_zone:data.time_zone},user:{id:'preview',is_admin:true},panels:{},callWS:async msg=>{
   if(msg.type==='sports_hub/data')return data;
+  if(msg.type==='sports_hub/personal'){
+    if(msg.action==='feed')return {events:data.events.filter(e=>personal.favorites['league:'+e.league_id]||e.participants.some(p=>personal.favorites[p.key])),profiles:Object.values(personal.favorites).map(v=>v.profile).filter(Boolean),news:[],sources:[],window_start:data.window_start,window_end:data.window_end};
+    if(msg.action==='favorite'){if(msg.enabled)personal.favorites[msg.key]={name:msg.name,profile:msg.profile};else delete personal.favorites[msg.key];personal.revision++;}
+    if(msg.action==='settings'){Object.assign(personal.settings,msg.settings);personal.revision++;}
+    localStorage.setItem('grandstand-preview-personal',JSON.stringify(personal));return structuredClone(personal);
+  }
   if(msg.type==='sports_hub/match')return structuredClone(matches[msg.league_id+':'+msg.event_id]||{timeline:[],lineups:[],teams:[],player_tables:[]});
   if(msg.type==='sports_hub/context')return structuredClone(contexts[msg.key]||{events:[],sources:[],news:{articles:[]}});
   if(msg.action==='save'&&msg.confirmed){saved.dashboards=saved.dashboards.filter(p=>p.key!==msg.dashboard.key);saved.dashboards.push(msg.dashboard);}
