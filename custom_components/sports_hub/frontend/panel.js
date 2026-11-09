@@ -11,6 +11,9 @@ import {matchMethods,matchReference} from './match-center.js';
 import {matchStyles} from './match-style.js';
 import {radarMethods,radarStyles} from './radar.js';
 import {patchPanel} from './render.js';
+import {personalMethods,personalStyles} from './personal.js';
+import {moveMonth} from './personal-model.js';
+import './personal-i18n.js';
 import {words, languageCode} from './i18n.js';
 import {colorValue, contrastColor, profileFromParticipant, profileFromLeague, dashboardEvents, discoverProfiles, approvedProfile} from './dashboards.js';
 
@@ -18,6 +21,7 @@ import {colorValue, contrastColor, profileFromParticipant, profileFromLeague, da
 
 const paths = {
   qualifying:'M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16 M9 1h6 M12 8v5l3 2',grid:'M4 3h6v4H4z M14 6h6v4h-6z M4 11h6v4H4z M14 14h6v4h-6z M4 19h6v3H4z',
+  myday:'M3 10l9-7 9 7v10H3z M9 20v-7h6v7',calendar:'M4 5h16v16H4z M8 3v4 M16 3v4 M4 10h16',personalSettings:'M4 6h16 M4 12h16 M4 18h16 M8 3v6 M16 9v6 M10 15v6',
   weatherRadar:'M4 15a4 4 0 1 1 1-7 6 6 0 0 1 11-2 4 4 0 0 1 1 8 M7 18l-1 3 M12 18l-1 3 M17 18l-1 3',
   tables:'M4 4h16v16H4z M4 9h16 M4 14h16 M9 4v16',competitionsTab:'M7 3h10v5a5 5 0 0 1-10 0z M7 5H3v3a4 4 0 0 0 4 4 M17 5h4v3a4 4 0 0 1-4 4 M12 13v6 M8 21h8',squad:'M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8 M4 21v-3a8 8 0 0 1 16 0v3 M3 4a3 3 0 0 0 0 6 M21 4a3 3 0 0 1 0 6',news:'M4 3h16v18H4z M8 7h8 M8 11h3 M14 11h2 M8 15h8 M8 18h8',championship:'M4 21V11h4v10 M10 21V3h4v18 M16 21V7h4v14',raceControl:'M5 22V3 M5 3h14l-3 5 3 5H5',strategy:'M4 6h16 M4 12h16 M4 18h16 M8 3v6 M16 9v6 M10 15v6',
   hub:'M4 7h16v10H4z M8 4v3 M16 4v3 M8 11v2 M16 11v2 M11 10v4 M4 20h16',
@@ -44,11 +48,12 @@ const icon = name => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${pat
 class SportsHubPanel extends HTMLElement {
   constructor() {
     super(); this.attachShadow({mode:'open'});
-    this.view='home'; this.sport='all'; this.league='all'; this.search=''; this.date=''; this.limit=24;
+    this.view='myday'; this.sport='all'; this.league='all'; this.search=''; this.date=''; this.limit=24;
     this.favorites=[]; this.favoriteNames={}; this.hideScores=false; this.revealed=new Set();
     this.dashboards=[];this.sidebarDashboards=[];this._activeDashboardKey=null;this._proposal=null;this._busy=false;
     this._onVisibility=()=>{if(!document.hidden)this._fetch();};
     this.shadowRoot.addEventListener('click', e=>this._click(e));
+    this.shadowRoot.addEventListener('grandstand-grid-visual',e=>{this._queuePreference({action:'settings',settings:{grid_visual:e.detail}});});
     this.shadowRoot.addEventListener('change', e=>this._change(e));
     this.shadowRoot.addEventListener('input', e=>this._input(e));
     this.shadowRoot.addEventListener('compositionstart',()=>{this._composing=true;});
@@ -77,18 +82,10 @@ class SportsHubPanel extends HTMLElement {
   get activeDashboard(){return this._panel?.config?.dashboard||approvedProfile(this.dashboards,this._activeDashboardKey);}
   get zone(){return this._data?.time_zone || this._hass?.config?.time_zone || 'UTC';}
   get now(){return this._panel?.config?.preview_now ? Date.parse(this._panel.config.preview_now) : Date.now();}
-  _loadPreferences(){
-    if(!this._hass?.user?.id || !this._panel?.config?.entry_id)return;
-    const key=`sports-hub:${this._panel.config.entry_id}:${this._hass.user.id}`;
-    if(key===this._storageKey)return;
-    this._storageKey=key;this.favorites=[];this.favoriteNames={};this.hideScores=false;
-    try{const saved=JSON.parse(localStorage.getItem(key)||'{}');this.favorites=Array.isArray(saved.favorites)?saved.favorites.filter(v=>typeof v==='string').slice(0,200):[];this.favoriteNames=saved.names && typeof saved.names==='object'?saved.names:{};this.hideScores=saved.hideScores===true;}catch{}
-  }
-  _savePreferences(){try{if(this._storageKey)localStorage.setItem(this._storageKey,JSON.stringify({favorites:this.favorites,names:this.favoriteNames,hideScores:this.hideScores}));}catch{}}
   async _fetch(){
     if(!this._hass || this._fetching || !this.isConnected)return;
     this._fetching=true;const userId=this._hass.user?.id;
-    try{const [data,profiles]=await Promise.all([this._hass.callWS({type:'sports_hub/data'}),this._hass.callWS({type:'sports_hub/dashboards'}).catch(()=>null)]);if(!this.isConnected||this._hass.user?.id!==userId)return;this._data=data;this._error=false;if(profiles){this.dashboards=profiles.dashboards||[];this.sidebarDashboards=profiles.sidebar||[];this._profileError=false;}else this._profileError=true;if(!this.date)this.date=dateKey(this.now,this.zone);}
+    try{const [data,profiles]=await Promise.all([this._hass.callWS({type:'sports_hub/data'}),this._hass.callWS({type:'sports_hub/dashboards'}).catch(()=>null)]);if(!this.isConnected||this._hass.user?.id!==userId)return;this._data=data;this._error=false;if(profiles){this.dashboards=profiles.dashboards||[];this.sidebarDashboards=profiles.sidebar||[];this._profileError=false;}else this._profileError=true;if(!this.date)this.date=dateKey(this.now,this.zone);await this._syncPreferences();}
     catch{this._error=true;}finally{this._fetching=false;if(this.isConnected){this._render();if(this._hass.user?.id!==userId)this._fetch();}}
   }
   _format(date,options={}){if(!date || !Number.isFinite(Date.parse(date)))return this.t.unknown;return new Intl.DateTimeFormat(this.lang,{timeZone:this.zone,...options}).format(new Date(date));}
@@ -131,7 +128,7 @@ class SportsHubPanel extends HTMLElement {
     this.search=event.target.value;this.limit=24;clearTimeout(this._searchTimer);
     if(!this._composing)this._searchTimer=setTimeout(()=>this._render(),180);
   }
-  _findProfile(key){return approvedProfile(this.dashboards,key)||discoverProfiles(this._data).find(p=>p.key===key);}
+  _findProfile(key){return approvedProfile(this.dashboards,key)||this._personalProfiles().find(p=>p.key===key)||discoverProfiles(this._data).find(p=>p.key===key);}
   _propose(profile){if(!profile)return;this._detail=null;this._proposal={...profile,sidebar:false};this._actionError='';this._render();this.shadowRoot.querySelector('[data-action="dashboard-cancel"]')?.focus();}
   async _dashboardRequest(payload){
     this._busy=true;this._actionError='';
@@ -185,6 +182,9 @@ class SportsHubPanel extends HTMLElement {
     let content='';
     if(!this._data)content=`<div class="empty"><div class="empty-icon ${this._error?'':'loading'}">${icon('hub')}</div><h3>${esc(this._error?this.t.offline:this.t.loading)}</h3><p>${esc(this.t.loadingText)}</p>${this._error?`<button class="cta" data-action="retry">${esc(this.t.retry)}</button>`:''}</div>`;
     else if(profile)content=this._dossier(profile,events);
+    else if(this.view==='myday')content=this._myDay();
+    else if(this.view==='calendar')content=this._calendarView();
+    else if(this.view==='personalSettings')content=this._settingsView();
     else if(this.view==='leagues')content=this._leagueDirectory();
     else if(this.view==='dashboards')content=this._dashboardDirectory();
     else{
@@ -195,7 +195,7 @@ class SportsHubPanel extends HTMLElement {
       content+=this._discovery()+`<div class="games">${filtered.length?filtered.slice(0,this.limit).map(e=>this._game(e)).join(''):this._empty(this.view)}</div>${filtered.length>this.limit?`<button class="cta show-more" data-action="more">${esc(this.t.more)} · ${filtered.length-this.limit}</button>`:''}`;
     }
     const sourceError=!profile&&this._data?.leagues.some(l=>l.error),partial=!profile&&this._data?.leagues.some(l=>l.partial);
-    const markup=`<style>${styles}${dossierStyles}${matchStyles}${radarStyles}</style><div class="shell ${profile?'branded':''}" ${profile?`style="--club:${colorValue(profile.color)};--club-secondary:${colorValue(profile.alternate_color,'#ffffff')};--club-contrast:${contrastColor(profile.color)}"`:''}><header class="topbar"><div class="top-inner"><button class="icon-button" data-action="menu" aria-label="${esc(this.t.menu)}">${icon('menu')}</button><div class="brand"><img class="brand-logo" src="${esc(new URL('./grandstand.png',import.meta.url).href)}" alt=""><span class="brand-name">GRAND<span>STAND</span></span></div>${this._panel?.config?.preview?`<span class="badge-demo">${esc(this.t.demo)}</span>`:''}<div class="top-gap"></div><div class="meta"><div class="connection"><i class="dot ${this._error||sourceError?'error':''}"></i>${esc(this._error?this.t.offline:sourceError?this.t.stale:this.t.fresh)}</div><div>${esc(this.zone)}</div></div><button class="icon-button" data-action="view" data-value="favorites" aria-label="${esc(this.t.favorites)}">${icon('star')}</button></div><div class="creator-strip"><span>${esc(this.t.communityProject)}</span><a class="coffee-link" href="https://paypal.me/maikeltimo" target="_blank" rel="noopener noreferrer" aria-label="Buy me a coffee · PayPal"><span aria-hidden="true">☕</span> Buy me a coffee <small>PayPal ↗</small></a></div></header><main class="main">${profile?`<div class="dashboard-back">${this._panel?.config?.dashboard?`<a class="cta" href="/sports-hub">← Grandstand</a>`:`<button class="cta" data-action="dashboard-back">← ${esc(this.t.myDashboards)}</button>`}</div>`:''}<nav class="nav" aria-label="Grandstand">${(profile?dossierTabs(profile):['home','live','schedule','results','favorites','leagues','dashboards']).map(view=>`<button class="${view===this.view?'active':''}" data-action="view" data-value="${view}" ${view===this.view?'aria-current="page"':''}>${icon(view==='favorites'?'star':view==='dashboards'?'leagues':view)}${esc(this.t[view])}${view==='live'&&profile?.target!=='racing:f1'?`<span class="count">${live}</span>`:''}</button>`).join('')}</nav>${this._error&&this._data?`<div class="alert" role="status">${esc(this.t.offline)} · ${esc(this.t.stale)}</div>`:''}${sourceError?`<div class="alert" role="status">${esc(this.t.errors)}</div>`:''}${partial?`<div class="alert">${esc(this.t.partial)}</div>`:''}${!profile&&this._data?.loading?`<p class="meta" role="status">${esc(this.t.backfill)} ${this._data.loaded_slices}/${this._data.total_slices}</p>`:''}${this._actionError?`<div class="alert" role="alert">${esc(this._actionError)}</div>`:''}${content}<footer class="footer"><div>${esc(this.t.footer)}<br>${esc(this.t.local)} ${esc(this.zone)} · Grandstand ${esc(this._data?.version||this._panel?.config?.version||'0.4.1')}</div><div><a href="https://github.com/maikelfuhrmann/ha-sports-hub" target="_blank" rel="noopener noreferrer">GitHub ↗</a> · <a href="https://paypal.me/maikeltimo" target="_blank" rel="noopener noreferrer">${esc(this.t.support)} ↗</a></div></footer></main></div>${this._proposal?this._proposalHtml():this._detail&&this._data?this._modalHtml():''}`;
+    const markup=`<style>${styles}${dossierStyles}${matchStyles}${radarStyles}${personalStyles}</style><div class="shell ${profile?'branded':''}" ${profile?`style="--club:${colorValue(profile.color)};--club-secondary:${colorValue(profile.alternate_color,'#ffffff')};--club-contrast:${contrastColor(profile.color)}"`:''}><header class="topbar"><div class="top-inner"><button class="icon-button" data-action="menu" aria-label="${esc(this.t.menu)}">${icon('menu')}</button><div class="brand"><img class="brand-logo" src="${esc(new URL('./grandstand.png',import.meta.url).href)}" alt=""><span class="brand-name">GRAND<span>STAND</span></span></div>${this._panel?.config?.preview?`<span class="badge-demo">${esc(this.t.demo)}</span>`:''}<div class="top-gap"></div><div class="meta"><div class="connection"><i class="dot ${this._error||sourceError?'error':''}"></i>${esc(this._error?this.t.offline:sourceError?this.t.stale:this.t.fresh)}</div><div>${esc(this.zone)}</div></div><button class="icon-button" data-action="view" data-value="favorites" aria-label="${esc(this.t.favorites)}">${icon('star')}</button></div><div class="creator-strip"><span>${esc(this.t.communityProject)}</span><a class="coffee-link" href="https://paypal.me/maikeltimo" target="_blank" rel="noopener noreferrer" aria-label="Buy me a coffee · PayPal"><span aria-hidden="true">☕</span> Buy me a coffee <small>PayPal ↗</small></a></div></header><main class="main">${profile?`<div class="dashboard-back">${this._panel?.config?.dashboard?`<a class="cta" href="/sports-hub">← Grandstand</a>`:`<button class="cta" data-action="dashboard-back">← ${esc(this.t.myDashboards)}</button>`}</div>`:''}<nav class="nav" aria-label="Grandstand">${(profile?dossierTabs(profile):['myday','home','live','calendar','schedule','results','favorites','leagues','dashboards','personalSettings']).map(view=>`<button class="${view===this.view?'active':''}" data-action="view" data-value="${view}" ${view===this.view?'aria-current="page"':''}>${icon(view==='favorites'?'star':view==='dashboards'?'leagues':view)}${esc(this.t[view])}${view==='live'&&profile?.target!=='racing:f1'?`<span class="count">${live}</span>`:''}</button>`).join('')}</nav>${this._error&&this._data?`<div class="alert" role="status">${esc(this.t.offline)} · ${esc(this.t.stale)}</div>`:''}${sourceError?`<div class="alert" role="status">${esc(this.t.errors)}</div>`:''}${partial?`<div class="alert">${esc(this.t.partial)}</div>`:''}${!profile&&this._data?.loading?`<p class="meta" role="status">${esc(this.t.backfill)} ${this._data.loaded_slices}/${this._data.total_slices}</p>`:''}${this._actionError?`<div class="alert" role="alert">${esc(this._actionError)}</div>`:''}${content}<footer class="footer"><div>${esc(this.t.footer)}<br>${esc(this.t.local)} ${esc(this.zone)} · Grandstand ${esc(this._data?.version||this._panel?.config?.version||'0.5.0')}</div><div><a href="https://github.com/maikelfuhrmann/ha-grandstand" target="_blank" rel="noopener noreferrer">GitHub ↗</a> · <a href="https://paypal.me/maikeltimo" target="_blank" rel="noopener noreferrer">${esc(this.t.support)} ↗</a></div></footer></main></div>${this._proposal?this._proposalHtml():this._detail&&this._data?this._modalHtml():''}`;
     // Keep the actual input node mounted while typing, including IME and mobile keyboards.
     if(focused==='search'&&!this._proposal){
       const template=document.createElement('template');template.innerHTML=markup;
@@ -231,15 +231,19 @@ class SportsHubPanel extends HTMLElement {
     if(action==='league'){this.league=value;this.sport='all';this.view='home';this.allDates=true;this.limit=24;}
     if(action==='spoiler'){this.hideScores=!this.hideScores;this.revealed.clear();this._savePreferences();}
     if(action==='favorite'||action==='league-favorite'){
-      const key=action==='league-favorite'?'league:'+value:value;
-      if(this.favorites.includes(key))this.favorites=this.favorites.filter(k=>k!==key);
-      else if(this.favorites.length<200){
-        this.favorites.push(key);const profile=this._findProfile(action==='league-favorite'?key:'team:'+key);
-        this.favoriteNames[key]=profile?.name||button.dataset.name||key;this._savePreferences();
-        if(profile&&!approvedProfile(this.dashboards,profile.key)){this._propose(profile);return;}
-      }
-      this._savePreferences();
+      const key=action==='league-favorite'?'league:'+value:value,profile=this._findProfile(action==='league-favorite'?key:'team:'+key);
+      const enabled=!this.favorites.includes(key);
+      if(!enabled)this.favorites=this.favorites.filter(k=>k!==key);
+      else if(this.favorites.length<200){this.favorites.push(key);this.favoriteNames[key]=profile?.name||button.dataset.name||key;}
+      else return;
+      this._saveFavorite(key,enabled,profile);
+      if(enabled&&profile&&!approvedProfile(this.dashboards,profile.key)){this._propose(profile);return;}
     }
+    if(action==='personal-retry'){await this._syncPreferences();this._ensurePersonal(true);return;}
+    if(action==='personal-save'){await this._savePersonalSettings();return;}
+    if(action==='calendar-shift'){this._calendarMonth=moveMonth(this._calendarMonth,Number(value));this._calendarDay=this._calendarMonth+'-01';}
+    if(action==='calendar-day')this._calendarDay=value;
+    if(action==='calendar-today'){this._calendarDay=dateKey(this.now,this.zone);this._calendarMonth=this._calendarDay.slice(0,7);}
     if(action==='date-shift'){this.date=shiftDate(this.date,Number(value));this.allDates=false;this.limit=24;}
     if(action==='today'){this.date=dateKey(this.now,this.zone);this.allDates=false;this.limit=24;}
     if(action==='all-dates'){this.allDates=!this.allDates;this.limit=24;}
@@ -255,6 +259,7 @@ class SportsHubPanel extends HTMLElement {
     if(action==='close')Array.from(this.shadowRoot.querySelectorAll('[data-action="details"]')).find(el=>el.dataset.value===this._returnFocus)?.focus();
   }
   _change(event){
+    if(event.target.dataset.personalField){this._settingsDraft||={};const key=event.target.dataset.personalField;this._settingsDraft[key]=event.target.type==='checkbox'?event.target.checked:key==='reminder_minutes'?Number(event.target.value):event.target.value;this._settingsSaved=false;return;}
     if(event.target.id==='search')return;
     if(event.target.id==='dossier-league'){this._dossierLeague=event.target.value;this.limit=24;this._render();return;}
     if(this._proposal&&['dashboard-name','dashboard-color','dashboard-secondary','dashboard-sidebar'].includes(event.target.id)){const key={'dashboard-name':'name','dashboard-color':'color','dashboard-secondary':'alternate_color','dashboard-sidebar':'sidebar'}[event.target.id];this._proposal[key]=event.target.type==='checkbox'?event.target.checked:event.target.value;if(event.target.type!=='text')this._render();return;}
@@ -262,6 +267,6 @@ if(event.target.id==='league'){this.league=event.target.value;this.limit=24;}if(
   _key(event){if(event.target.matches('input,textarea,select'))event.stopPropagation();if(!this._detail&&!this._proposal)return;if(event.key==='Escape'){this._detail=null;this._proposal=null;this._render();event.preventDefault();}if(event.key==='Tab'){const nodes=[...this.shadowRoot.querySelectorAll('.modal button,.modal a[href],.modal input,.modal summary')];const first=nodes[0],last=nodes.at(-1);if(event.shiftKey&&this.shadowRoot.activeElement===first){last?.focus();event.preventDefault();}else if(!event.shiftKey&&this.shadowRoot.activeElement===last){first?.focus();event.preventDefault();}}}
 }
 
-Object.assign(SportsHubPanel.prototype,dossierMethods,f1DossierMethods,matchMethods,radarMethods);
+Object.assign(SportsHubPanel.prototype,dossierMethods,f1DossierMethods,matchMethods,radarMethods,personalMethods);
 
 if(!customElements.get('sports-hub-panel'))customElements.define('sports-hub-panel',SportsHubPanel);

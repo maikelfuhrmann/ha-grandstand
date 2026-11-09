@@ -3,7 +3,7 @@ import {clubForm, mergeProfileEvents, dossierTabs} from './dossier-model.js';
 import {dashboardEvents} from './dashboards.js';
 
 export const dossierMethods={
-  _profileEvents(profile){return profile?mergeProfileEvents(dashboardEvents(this._data?.events||[],profile),this._dossiers?.[profile.key+':'+this.lang]?.data?.events,profile):this._data?.events||[];},
+  _profileEvents(profile){return profile?mergeProfileEvents(dashboardEvents(this._data?.events||[],profile),this._dossiers?.[profile.key+':'+this.lang]?.data?.events,profile):['myday','calendar'].includes(this.view)?[...new Map([...(this._personalData?.events||[]),...(this._data?.events||[])].map(e=>[e.id,e])).values()]:this._data?.events||[];},
   _dossierData(profile){return this._dossiers?.[profile.key+':'+this.lang]?.data;},
   async _ensureDossier(profile,force=false){
     if(!profile||!this._hass)return;

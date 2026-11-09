@@ -98,7 +98,7 @@ export const f1DossierMethods={
           const signature=JSON.stringify(config),old=this._nativeCards.get(id);
           const card=old?.signature===signature?old.card:document.createElement(startingGrid?'sports-hub-starting-grid':circle?'f1-circle-of-doom-card':'f1-sensor-card');
           if(card!==old?.card)card.setConfig(config);
-          card.hass=this._hass;if(slot.firstElementChild!==card)slot.replaceChildren(card);current.set(id,{card,signature});
+          card.hass=this._hass;if(card.tagName==='SPORTS-HUB-STARTING-GRID'&&this._preferences)card.visualPreference=this._preferences.settings.grid_visual;if(slot.firstElementChild!==card)slot.replaceChildren(card);current.set(id,{card,signature});
         }catch{slot.innerHTML=`<p class="notice">${escapeHtml(this.t.f1CardError)}</p>`;}
       }
       this._nativeCards=current;
