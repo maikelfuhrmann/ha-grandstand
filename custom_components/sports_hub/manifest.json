@@ -4,10 +4,10 @@
   "codeowners": ["@maikelfuhrmann"],
   "config_flow": true,
   "dependencies": ["frontend", "http", "panel_custom"],
-  "documentation": "https://github.com/maikelfuhrmann/ha-sports-hub",
+  "documentation": "https://github.com/maikelfuhrmann/ha-grandstand",
   "integration_type": "service",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/maikelfuhrmann/ha-sports-hub/issues",
+  "issue_tracker": "https://github.com/maikelfuhrmann/ha-grandstand/issues",
   "requirements": [],
-  "version": "0.4.1"
+  "version": "0.5.0"
 }

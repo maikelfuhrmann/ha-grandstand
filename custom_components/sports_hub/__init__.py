@@ -12,8 +12,10 @@ from .const import DOMAIN, PANEL_NAME, PANEL_PATH, STATIC_PATH, VERSION, BRAND_N
 from .coordinator import SportsHubCoordinator
 from .context import setup_context
 from .dashboards import DashboardManager, DATA_KEY, websocket_dashboards
+from .personal import PersonalManager, PERSONAL_KEY, websocket_personal
+from .reminders import ReminderRunner
 
-PLATFORMS = [Platform.SENSOR]
+PLATFORMS = [Platform.SENSOR, Platform.CALENDAR]
 
 
 async def async_setup(hass, config):
@@ -27,6 +29,10 @@ async def async_setup(hass, config):
     hass.data[DATA_KEY] = manager
     websocket_api.async_register_command(hass, websocket_dashboards)
     setup_context(hass)
+    personal = PersonalManager(hass)
+    await personal.load()
+    hass.data[PERSONAL_KEY] = personal
+    websocket_api.async_register_command(hass, websocket_personal)
     return True
 
 
@@ -49,6 +55,7 @@ async def async_setup_entry(hass, entry):
         require_admin=False,
     )
     await hass.data[DATA_KEY].activate(entry.entry_id)
+    entry.async_on_unload(ReminderRunner(hass.data[PERSONAL_KEY]).start())
     return True
 
 
