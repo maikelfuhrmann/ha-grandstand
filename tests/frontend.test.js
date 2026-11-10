@@ -164,3 +164,11 @@ test('a response from a previous HA user never applies to another user',async()=
 test('personal UI strings are available in every supported language',()=>{
  for(const lang of ['en','de','es','fr','it','nl'])for(const key of ['myday','calendar','personalSettings','quietHours','calendarSharedNotice','syncError'])assert.equal(typeof words[lang][key],'string');
 });
+
+test('approved clubs remain searchable outside the scoreboard window without merging namesakes',()=>{
+ const men={key:'team:soccer:men',target:'soccer:men',kind:'team',name:'Bayern Munich',league_id:'soccer:ger.1',color:'#dc052d'};
+ const women={...men,key:'team:soccer:women',target:'soccer:women',league_id:'soccer:uefa.wchampions'};
+ const rows=discoverProfiles({leagues:[],events:[]},'Bayern',[men,women,men]);
+ assert.equal(rows.length,2);assert.ok(rows.some(p=>p.target==='soccer:men'));assert.ok(rows.some(p=>p.target==='soccer:women'));
+ assert.equal(discoverProfiles({leagues:[],events:[]},'Frankfurt',[men]).length,0);
+});
