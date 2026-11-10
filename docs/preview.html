@@ -14,8 +14,8 @@ const matches=params.has('live')?await fetch('./match-data.json').then(r=>r.ok?r
 let saved=JSON.parse(localStorage.getItem('sports-hub-preview-dashboards')||'{"dashboards":[],"sidebar":[]}');
 const demoProfiles=discoverProfiles(data).filter(p=>p.kind==='league').slice(0,3);
 let personal=JSON.parse(localStorage.getItem('grandstand-preview-personal')||'null')||{initialized:true,revision:1,favorites:Object.fromEntries(demoProfiles.map(p=>[p.key,{name:p.name,profile:p}])),settings:{"hide_scores": false, "start_view": "myday", "grid_visual": "portraits", "language": "en", "calendar_shared": false, "reminders_enabled": false, "reminder_minutes": 15, "reminder_device": "", "quiet_enabled": true, "quiet_start": "22:00", "quiet_end": "08:00"},devices:[{id:'demo-device',name:'Demo phone'}]};
-data.version='0.5.0';
-panel.panel={config:{entry_id:'preview',version:'0.5.0',preview:true,preview_now:data.generated_at,dashboard:saved.sidebar.find(p=>p.key===params.get('sidebar'))}};
+data.version='0.5.1';
+panel.panel={config:{entry_id:'preview',version:'0.5.1',preview:true,preview_now:data.generated_at,dashboard:saved.sidebar.find(p=>p.key===params.get('sidebar'))}};
 panel.hass={language:params.get('lang')||'de',config:{time_zone:data.time_zone},user:{id:'preview',is_admin:true},panels:{},callWS:async msg=>{
   if(msg.type==='sports_hub/data')return data;
   if(msg.type==='sports_hub/personal'){
