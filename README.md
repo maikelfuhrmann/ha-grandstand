@@ -52,7 +52,7 @@ This is a custom repository; inclusion in the default marketplace catalog is not
 
 ### Manual installation
 
-Download the `ha-sports-hub-0.5.0.zip` release asset and extract it into your HA configuration directory. The resulting path must be:
+Download the `ha-sports-hub-0.5.1.zip` release asset and extract it into your HA configuration directory. The resulting path must be:
 
 ```text
 config/custom_components/sports_hub/manifest.json
@@ -74,7 +74,7 @@ Personal and shared dashboards fetch additional season information independently
 
 **My Matchday** is the default start page. It gathers your favorites into one view with a next/live spotlight, today’s events, upcoming fixtures, recent results, profile shortcuts and up to six linked news headlines. Spoiler protection hides news as well as scores. Change the default to **Overview** in **My settings** if preferred.
 
-Favorites and settings follow the authenticated HA account across devices. On the first upgrade, that account imports favorites from the first browser that opens Grandstand. If that browser has no previous preferences, the account’s own approved dashboards provide initial favorites. Existing server preferences always win on later devices. Concurrent additions/removals merge individually; settings updates change only the edited fields.
+Use the star on an existing card under **Dashboards** to include that club or league in My Matchday and the calendar, even during a fixture break. Approved and followed profiles also remain searchable when they have no match in the short overview window. Favorites and settings follow the authenticated HA account across devices. On the first upgrade, that account imports favorites from the first browser that opens Grandstand. If that browser has no previous preferences, the account’s own approved dashboards provide initial favorites. Existing server preferences always win on later devices. Concurrent additions/removals merge individually; settings updates change only the edited fields.
 
 **Sports calendar** shows a monthly view and the selected day’s events, using HA’s timezone. Published schedules cover the last seven and next 90 days where the source has announced them. Soccer favorites include league, cup and international fixtures; Formula 1 includes available practice, qualifying, sprint and race times. The first 40 recognized favorite profiles receive extended schedule requests; all favorites remain eligible for the shared scoreboard. Coverage and stale-source notices are visible. This is not a guarantee of a complete future schedule, and calendar-only historical F1 sessions do not invent results.
 
