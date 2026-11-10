@@ -32,7 +32,7 @@ export function dashboardEvents(events,profile) {
   if(!profile)return events;
   return events.filter(event=>profile.kind==='league'?event.league_id===profile.target:event.participants.some(p=>p.key===profile.target));
 }
-export function discoverProfiles(data,query='') {
+export function discoverProfiles(data,query='',knownProfiles=[]) {
   const profiles=new Map();
   for(const league of data?.leagues||[]){const p=profileFromLeague(league);profiles.set(p.key,p);}
   for(const event of data?.events||[])for(const participant of event.participants||[]){
@@ -41,6 +41,8 @@ export function discoverProfiles(data,query='') {
     // Prefer an entry with actual branding when tournaments omit team metadata.
     if(!old||participant.color)profiles.set(p.key,{...old,...p,logo:p.logo||old?.logo||''});
   }
+  // Approved/followed clubs remain discoverable during breaks in the short scoreboard window.
+  for(const p of knownProfiles)if(p?.key)profiles.set(p.key,{...profiles.get(p.key),...p});
   return [...profiles.values()].filter(p=>searchMatches([p.name,p.short_name,p.abbreviation],query));
 }
 export function approvedProfile(profiles,key){return (profiles||[]).find(p=>p.key===key)||null;}
