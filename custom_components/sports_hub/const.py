@@ -1,7 +1,7 @@
 """Constants shared by integration and tests."""
 
 DOMAIN = "sports_hub"
-VERSION = "0.5.0"
+VERSION = "0.5.1"
 BRAND_NAME = "Grandstand"
 PANEL_PATH = "sports-hub"
 PANEL_NAME = "sports-hub-panel"
