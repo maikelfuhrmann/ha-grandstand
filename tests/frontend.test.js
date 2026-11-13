@@ -172,3 +172,27 @@ test('approved clubs remain searchable outside the scoreboard window without mer
  assert.equal(rows.length,2);assert.ok(rows.some(p=>p.target==='soccer:men'));assert.ok(rows.some(p=>p.target==='soccer:women'));
  assert.equal(discoverProfiles({leagues:[],events:[]},'Frankfurt',[men]).length,0);
 });
+
+
+test('my matchday includes the race after six earlier mixed-sport fixtures',()=>{
+ const dates=['2026-11-20T00:30Z','2026-11-20T04:00Z','2026-11-20T19:30Z','2026-11-21T00:30Z','2026-11-21T04:00Z','2026-11-21T14:30Z','2026-11-22T04:00Z'];
+ const names=['FP1','FP2','Bayern','FP3','Qualifying','Frankfurt','Las Vegas Race'];
+ const rows=dates.map((date,i)=>({...base,id:`fixture-${i}`,name:names[i],date,state:'scheduled'}));
+ const panel={...personalMethods,now:Date.parse('2026-11-13T08:00Z'),zone:'Europe/Berlin',t:words.de,favorites:['league:racing:f1'],dashboards:[],_ensurePersonal(){},_personalEvents:()=>rows,_personalProfiles:()=>[],_personalStatus:()=>'',_format:()=>'',_game:e=>`<article data-test-event="${e.id}">${e.name}</article>`};
+ const html=panel._myDay();assert.match(html,/Las Vegas Race/);assert.match(html,/class="count">7</);assert.doesNotMatch(html,/data-action="personal-more"/);
+});
+test('every matchday event remains reachable beyond the initial page, independently per section',()=>{
+ const events=Array.from({length:42},(_,i)=>({id:`event-${i}`}));
+ const panel={...personalMethods,t:words.de,_game:e=>`<article data-test-event="${e.id}"></article>`};
+ let html=panel._personalBlock('upcoming','Next',events);
+ assert.match(html,/12 \/ 42/);assert.match(html,/Mehr anzeigen · Next \(30\)/);assert.equal((html.match(/<article/g)||[]).length,12);
+ for(const count of [24,36,42]){
+  panel._showMorePersonal('upcoming');html=panel._personalBlock('upcoming','Next',events);
+  assert.equal((html.match(/<article/g)||[]).length,count);
+  assert.equal(new Set([...html.matchAll(/data-test-event="([^"]+)"/g)].map(m=>m[1])).size,count);
+  assert.equal(panel._personalBlock('upcoming','Next',events),html,'a refresh must not collapse expanded events');
+ }
+ assert.match(html,/event-41/);assert.doesNotMatch(html,/data-action="personal-more"/);
+ assert.equal((panel._personalBlock('results','Results',events).match(/<article/g)||[]).length,12);
+ assert.equal(panel._personalBlock('live','Live',[]),'');
+});
