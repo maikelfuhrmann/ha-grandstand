@@ -149,4 +149,5 @@ def normalize_f1(calendar, drivers, constructors, results):
         for row in race.get('Results',[]):
             d=row.get('Driver') or {};last.append({'rank':row.get('position'),'name':text(d.get('givenName','')+' '+d.get('familyName','')),'team':text((row.get('Constructor') or {}).get('name')),'points':row.get('points'),'laps':row.get('laps'),'time':text((row.get('Time') or {}).get('time') or row.get('status'))})
     rr=mr(results,'RaceTable').get('Races',[])
-    return {'season':text(mr(calendar,'RaceTable').get('season')),'calendar':races,'drivers':ds,'constructors':cs,'results':last,'result_name':text(rr[0].get('raceName')) if rr else ''}
+    return {'season':text(mr(calendar,'RaceTable').get('season')),'calendar':races,'drivers':ds,'constructors':cs,'results':last,'result_name':text(rr[0].get('raceName')) if rr else '',
+            'result_season':text(rr[0].get('season')) if rr else '', 'result_round':text(rr[0].get('round')) if rr else ''}

@@ -80,13 +80,41 @@ def result_rows(page,kind):
     return rows if len(rows)>=2 else []
 
 
-def select_weekend(calendar,now=None):
-    now=now or datetime.now(timezone.utc)
+def weekend_session(race,live=None,now=None):
+    """Bind live state by session date, never by the provider's remembered label alone."""
+    now=now or datetime.now(timezone.utc);live=live or {}
+    current=live.get('current_session') or {};status=live.get('session_status') or {}
+    attrs=current.get('attributes') or {};start=parse_time(attrs.get('start'))
+    date=parse_time((race or {}).get('date'))
+    sessions=[parse_time(s.get('date')) for s in (race or {}).get('sessions',[])]
+    first=min((s for s in sessions if s),default=date)
+    if not start or not date or not first or start>now+timedelta(hours=12) or not first-timedelta(hours=12)<=start<=date+timedelta(hours=48):return {}
+    label=str(attrs.get('name') or attrs.get('last_label') or current.get('state') or '').lower().replace(' ','')
+    status_attrs=status.get('attributes') or {};status_start=parse_time(status_attrs.get('start'))
+    # Status and current-session entities may update separately at a session boundary.
+    state=str(status.get('state') or '').lower() if status_start==start else ''
+    if not state:state=str(attrs.get('live_status') or '').lower()
+    updated=parse_time(status.get('updated_at') if status_start==start else current.get('updated_at'))
+    fresh=bool(updated and timedelta(0)<=now-updated<timedelta(hours=6))
+    return {'race':label=='race','finished':state in ('finished','finalised','finalized','ended'),
+            'active':fresh and state in ('pre','live','started','suspended','break'), 'start':start}
+
+
+def select_weekend(calendar,now=None,live=None,completed=None):
+    """Follow the next unfinished GP; results have a separate archive selection."""
+    now=now or datetime.now(timezone.utc);completed=completed or []
+    if isinstance(completed,dict):completed=[completed]
     races=sorted((r for r in calendar if parse_time(r.get('date'))),key=lambda r:r['date'])
-    # Keep today's race through delays; between weekends retain the last result.
-    current=next((r for r in races if now-timedelta(hours=10)<=parse_time(r['date'])<=now+timedelta(days=4)),None)
-    past=[r for r in races if parse_time(r['date'])<now]
-    return current or (past[-1] if past else races[0] if races else None)
+    for race in races:
+        date=parse_time(race['date']);session=weekend_session(race,live,now)
+        if session.get('race') and session.get('finished'):continue
+        if any(str(race.get('season') or date.year)==str(done.get('season')) and str(race.get('round'))==str(done.get('round')) for done in completed):continue
+        # An explicitly active or suspended race wins over the estimated duration.
+        if session.get('race') and session.get('active'):return race
+        # Without a finish feed, expire the planned window; never retain the old GP indefinitely.
+        confirmed=next((s.get('time_confirmed',True) for s in race.get('sessions',[]) if s.get('name')=='Race'),True)
+        if now<date+timedelta(hours=4 if confirmed else 24):return race
+    return None
 
 
 def jolpica_qualifying(data,season,round_number):

@@ -12,14 +12,14 @@ from .venue import resolve_venue
 from .const import API_ROOT, VERSION
 from .enrichment_model import normalize_table, normalize_schedule, normalize_team, normalize_roster, normalize_news_xml, normalize_news_espn, normalize_f1, infer_home_venue
 from .model import parse_time
-from .f1_results import parse_result_page, result_root, result_rows, select_weekend, jolpica_qualifying, F1_SITE
+from .f1_results import parse_result_page, result_root, result_rows, select_weekend, weekend_session, jolpica_qualifying, F1_SITE
 
 LANGUAGES={'de':('DE','de'),'en':('US','en'),'es':('ES','es'),'fr':('FR','fr'),'it':('IT','it'),'nl':('NL','nl')}
 
 
 class EnrichmentProvider:
     def __init__(self,session):
-        self.session=session;self.cache={};self.pending={};self.semaphore=asyncio.Semaphore(4)
+        self.session=session;self.cache={};self.pending={};self.semaphore=asyncio.Semaphore(4);self.f1_completed=set()
 
     async def get(self,url,ttl=900,xml=False,html=False):
         now=datetime.now(timezone.utc);cached=self.cache.get(url)
@@ -77,10 +77,10 @@ class EnrichmentProvider:
             league=None
         return league,team_id
 
-    async def context(self,profile,snapshot,lang='en'):
+    async def context(self,profile,snapshot,lang='en',live=None):
         league,team_id=self.resolve(profile,snapshot)
         if not league:return {'key':profile['key'],'kind':'unavailable','events':[],'sources':[]}
-        if league['id']=='racing:f1':return await self.f1(profile,lang)
+        if league['id']=='racing:f1':return await self.f1(profile,lang,live,snapshot)
         sources=[]
         def source(label,item):
             sources.append({'name':label,'updated_at':item['updated_at'],'stale':item['error']})
@@ -155,18 +155,42 @@ class EnrichmentProvider:
         radar={'event_id':focus['id'],'event_name':focus['name'],'location':await resolve_venue(self,focus.get('location'))} if focus else None
         return {'radar':radar,'key':profile['key'],'kind':'team' if team_id else 'league','primary_league':league['id'],'team':info,'events':events,'roster':roster,'tables':tables,'competitions':competitions,'news':news,'sources':sources,'generated_at':datetime.now(timezone.utc).isoformat()}
 
-    async def f1(self,profile,lang):
+    async def f1(self,profile,lang,live=None,snapshot=None):
         base='https://api.jolpi.ca/ergast/f1/current'
-        items=await asyncio.gather(*(self.get(base+path,3600) for path in ['.json?limit=100','/driverStandings.json?limit=100','/constructorStandings.json?limit=100','/last/results.json?limit=100']))
+        items=await asyncio.gather(*(self.get(base+path,60 if '/last/results' in path else 3600) for path in ['.json?limit=100','/driverStandings.json?limit=100','/constructorStandings.json?limit=100','/last/results.json?limit=100']))
         data=normalize_f1(*(i['data'] for i in items))
-        weekend,news=await asyncio.gather(self.f1_weekend(data),self.news('Formula 1',lang,LEAGUES['racing:f1']))
+        completed={'season':data['result_season'],'round':data['result_round']} if data['results'] else {}
+        if completed:self.f1_completed.add((completed['season'],completed['round']))
+        for event in (snapshot or {}).get('events',[]):
+            if event.get('league_id')!='racing:f1' or event.get('state')!='finished' or event.get('stale') or str(event.get('subtitle','')).lower()!='race':continue
+            date=parse_time(event.get('date'))
+            match=next((r for r in data['calendar'] if date and abs((parse_time(r['date'])-date).total_seconds())<3600),None)
+            if match:self.f1_completed.add((data['season'],str(match['round'])))
+        for candidate in data['calendar']:
+            session=weekend_session(candidate,live)
+            if session.get('race') and session.get('finished'):self.f1_completed.add((data['season'],str(candidate['round'])))
+        self.f1_completed={pair for pair in self.f1_completed if pair[0].isdigit() and int(pair[0])>=datetime.now(timezone.utc).year-1}
+        race=select_weekend(data['calendar'],live=live,completed=[{'season':year,'round':round_number} for year,round_number in self.f1_completed])
+        previous=[r for r in data['calendar'] if (not race or r['date']<race['date']) and parse_time(r['date'])<datetime.now(timezone.utc)]
+        data['last_completed']={'season':data['season'],'round':previous[-1]['round']} if previous else None
+        if not race and data['season'].isdigit():
+            # Year boundaries use the published next calendar, never a fabricated schedule.
+            following=await self.get(f"https://api.jolpi.ca/ergast/f1/{int(data['season'])+1}.json?limit=100",3600)
+            future=normalize_f1(following['data'],{},{},{})
+            race=select_weekend(future['calendar'],live=live)
+            if race:race={**race,'season':future['season']}
+        if race:race={**race,'season':race.get('season') or data['season']}
+        data['focus']=race
+        session=weekend_session(race,live)
+        data['live_available']=bool(session)
+        weekend,news,forecast=await asyncio.gather(self.f1_weekend(data,race),self.news('Formula 1',lang,LEAGUES['racing:f1']),self.f1_forecast(race))
         data['weekend']=weekend
-        race=select_weekend(data['calendar'])
+        data['forecast']=forecast
         data['radar']={'event_name':race['name'],'location':race.get('location')} if race else None
         return {'key':profile['key'],'kind':'f1','f1':data,'events':[],'news':news,'sources':[{'name':'Jolpica · '+label,'updated_at':i['updated_at'],'stale':i['error']} for label,i in zip(['Calendar','Drivers','Constructors','Results'],items)]+weekend.get('sources',[]),'generated_at':datetime.now(timezone.utc).isoformat()}
 
-    async def f1_weekend(self,data):
-        race=select_weekend(data['calendar']);season=data['season']
+    async def f1_weekend(self,data,race):
+        season=str((race or {}).get('season') or data['season'])
         if not race or not re.fullmatch(r'20\d{2}',season) or not str(race['round']).isdigit():return {}
         result={'season':season,'round':str(race['round']),'meeting':race['name'],'race_date':race['date'],
                 'qualifying_date':next((s['date'] for s in race['sessions'] if s['name']=='Qualifying'),''),'sources':[]}
@@ -184,3 +208,38 @@ class EnrichmentProvider:
                                   'updated_at':fallback['updated_at'],'stale':fallback['error'],'notes':[]}
             result['sources'].append({'name':'Jolpica · Qualifying','updated_at':fallback['updated_at'],'stale':fallback['error']})
         return result
+
+    async def f1_forecast(self,race):
+        location=(race or {}).get('location') or {};date=parse_time((race or {}).get('date'))
+        if not date or not all(isinstance(location.get(k),(int,float)) for k in ('latitude','longitude')):return None
+        if not timedelta(0)<=date-datetime.now(timezone.utc)<=timedelta(days=15):return None
+        if not any(s.get('name')=='Race' and s.get('time_confirmed') for s in race.get('sessions',[])):return None
+        keys=('temperature_2m','precipitation_probability','wind_speed_10m')
+        item=await self.get('https://api.open-meteo.com/v1/forecast?'+urlencode({'latitude':location['latitude'],'longitude':location['longitude'],
+            'hourly':','.join(keys),'forecast_days':16,'timeformat':'unixtime','timezone':'UTC'}),1800)
+        hourly=item['data'].get('hourly') or {};times=hourly.get('time') or []
+        indices=[i for i,t in enumerate(times) if isinstance(t,(int,float)) and abs(t-date.timestamp())<=1800]
+        if not indices:return None
+        index=indices[0]
+        return {'date':datetime.fromtimestamp(times[index],timezone.utc).isoformat(),'meeting':race['name'],
+                'values':{k:(hourly.get(k) or [])[index] if len(hourly.get(k) or [])>index else None for k in keys},
+                'updated_at':item['updated_at'],'stale':item['error'],'source':'Open-Meteo'}
+
+    async def f1_archive(self,profile,season,round_number=None):
+        """An independently selected, authenticated public results archive."""
+        base=f'https://api.jolpi.ca/ergast/f1/{season}'
+        calendar=await self.get(base+'.json?limit=100',3600)
+        calendar_data=normalize_f1(calendar['data'],{},{},{})
+        races=calendar_data['calendar'] if calendar_data['season']==str(season) else []
+        if round_number is not None and not any(str(r['round'])==str(round_number) for r in races):
+            return {'kind':'f1_archive','season':str(season),'calendar':races,'round':str(round_number),'results':[],'qualifying':[],'error':bool(calendar['error'])}
+        result=await self.get(base+f"/{round_number or 'last'}/results.json?limit=100",60 if season>=datetime.now(timezone.utc).year else 86400)
+        normalized=normalize_f1(calendar['data'],{},{},result['data'])
+        chosen=str(round_number or normalized['result_round'] or (races[0]['round'] if races else ''))
+        race=next((r for r in races if str(r['round'])==chosen),None)
+        qualifying=await self.get(base+f'/{chosen}/qualifying.json?limit=100',300 if season>=datetime.now(timezone.utc).year else 86400) if race else None
+        valid=normalized['result_season']==str(season) and normalized['result_round']==chosen
+        items=[('Calendar',calendar),('Race results',result)]+([('Qualifying',qualifying)] if qualifying else [])
+        return {'kind':'f1_archive','season':str(season),'calendar':races,'round':chosen,'race':race,
+                'results':normalized['results'] if valid else [],'qualifying':jolpica_qualifying(qualifying['data'],season,chosen) if qualifying else [],
+                'error':any(i['error'] for _,i in items),'sources':[{'name':'Jolpica · '+name,'updated_at':i['updated_at'],'stale':i['error']} for name,i in items]}
