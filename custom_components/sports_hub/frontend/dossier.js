@@ -8,11 +8,14 @@ export const dossierMethods={
   async _ensureDossier(profile,force=false){
     if(!profile||!this._hass)return;
     const key=profile.key+':'+this.lang;this._dossiers||={};const cached=this._dossiers[key];
-    if(cached?.busy||(!force&&cached&&Date.now()-cached.fetched<60000))return;
-    const userId=this._hass.user?.id;this._dossiers[key]={...cached,busy:true};
-    try{const data=await this._hass.callWS({type:'sports_hub/context',key:profile.key,language:this.lang});if(userId!==this._hass.user?.id)return;this._dossiers[key]={data,fetched:Date.now(),busy:false};}
-    catch{if(userId!==this._hass.user?.id)return;this._dossiers[key]={...cached,error:true,fetched:Date.now(),busy:false};}
+    if(cached?.busy){if(force)cached.refreshPending=true;return;}
+    if(!force&&cached&&Date.now()-cached.fetched<30000)return;
+    const userId=this._hass.user?.id;this._dossiers[key]={...cached,busy:true,refreshPending:false};
+    try{const data=await this._hass.callWS({type:'sports_hub/context',key:profile.key,language:this.lang});if(userId!==this._hass.user?.id)return;this._dossiers[key]={data,fetched:Date.now(),busy:false,refreshPending:this._dossiers[key]?.refreshPending};}
+    catch{if(userId!==this._hass.user?.id)return;this._dossiers[key]={...cached,error:true,fetched:Date.now(),busy:false,refreshPending:this._dossiers[key]?.refreshPending};}
+    const again=this._dossiers[key]?.refreshPending;
     if(this.isConnected&&this.activeDashboard?.key+':'+this.lang===key)this._render();
+    if(again)this._ensureDossier(profile,true);
   },
   _dossierSection(title,body,action='',value=''){
     return `<section class="dossier-section"><div class="dossier-heading"><h2>${escapeHtml(title)}</h2>${action?`<button class="text-action" data-action="${action}" data-value="${escapeHtml(value)}">${escapeHtml(this.t.viewAll)} ↗</button>`:''}</div>${body}</section>`;
@@ -23,7 +26,7 @@ export const dossierMethods={
     this._ensureDossier(profile);
     const cache=this._dossiers?.[profile.key+':'+this.lang],data=cache?.data;
     const state=!data?`<div class="dossier-loading" role="status">${escapeHtml(cache?.error?this.t.richError:this.t.richLoading)}${cache?.error?` <button class="cta" data-action="dossier-retry">${escapeHtml(this.t.retry)}</button>`:''}</div>`:'';
-    if(profile.target==='racing:f1')return state+this._f1Dossier(profile,data)+this._sourceSummary(data);
+    if(profile.target==='racing:f1')return state+this._f1Dossier(profile,data)+(this.view==='results'?'':this._sourceSummary(data));
     const team=data?.team||{};
     const upcoming=events.filter(e=>e.state==='scheduled'&&Date.parse(e.date)>=this.now).sort((a,b)=>a.date.localeCompare(b.date));
     const recent=events.filter(e=>e.state==='finished').sort((a,b)=>b.date.localeCompare(a.date));

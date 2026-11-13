@@ -46,7 +46,9 @@ export function f1HeadshotAsset(name,season,drivers){
  return asset?{...asset,cropped:true}:null;
 }
 export function f1WeekendModel(resource,weekend={},native=false,now=Date.now()){
- const model=startingGridModel(resource),packet=resource?.data;
+ let model=startingGridModel(resource);const packet=resource?.data;
+ // Native grid subscriptions can still point at the previous meeting after rollover.
+ if(weekend.season&&weekend.round&&(String(packet?.context?.season)!==String(weekend.season)||String(packet?.context?.round)!==String(weekend.round)))model={...model,grid:[],pit:[],unassigned:[],meeting:weekend.meeting,available:false};
  // Do not briefly reveal public results while the protected channel checks spoiler state.
  if(model.blocked||(native&&!resource)||native&&model.loading)return {...model,qualifying:[],notes:[]};
  const q=weekend.qualifying||{},g=weekend.grid||{},qrows=(q.rows||[]).slice(0,40),grows=(g.rows||[]).slice(0,40);
