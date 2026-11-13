@@ -142,3 +142,57 @@ class EnrichmentProviderTests(unittest.IsolatedAsyncioTestCase):
         manager.shared[PROFILE['key']]=PROFILE
         await websocket_context.__wrapped__(hass,conn,msg);provider.context.assert_awaited_once()
         conn.user=None;await websocket_context.__wrapped__(hass,conn,msg);self.assertEqual(conn.send_error.call_args.args[1],'unauthorized')
+
+class F1DossierRegression(unittest.IsolatedAsyncioTestCase):
+    def calendar(self,year='2026'):
+        return {'MRData':{'RaceTable':{'season':year,'Races':[
+            {'season':year,'round':'1','raceName':'Previous GP','date':year+'-11-08','time':'17:00:00Z','Circuit':{'circuitId':'interlagos','circuitName':'Brazil','Location':{'lat':'-23.7','long':'-46.7'}}},
+            {'season':year,'round':'2','raceName':'Next GP','date':year+'-11-22','time':'06:00:00Z','Circuit':{'circuitId':'vegas','circuitName':'Las Vegas','Location':{'lat':'36.1','long':'-115.1'}}}]}}}
+    def results(self,year='2026',round_number='1'):
+        return {'MRData':{'RaceTable':{'Races':[{'season':year,'round':round_number,'raceName':'Previous GP','Results':[{'position':'1','Driver':{'givenName':'Test','familyName':'Winner'},'Constructor':{'name':'Team'},'Time':{'time':'1:30:00.000'},'laps':'71','points':'25'}]}]}}}
+    async def test_all_focus_data_follow_next_gp_and_old_live_data_cannot_follow(self):
+        from unittest.mock import patch
+        class Clock(datetime):
+            @classmethod
+            def now(cls,tz=None):return cls(2026,11,8,19,tzinfo=timezone.utc)
+        p=EnrichmentProvider(None)
+        async def get(url,*args,**kwargs):
+            if '/current.json' in url:return item(self.calendar())
+            return item({})
+        p.get=AsyncMock(side_effect=get);p.news=AsyncMock(return_value={});p.f1_weekend=AsyncMock(return_value={});p.f1_forecast=AsyncMock(return_value=None)
+        live={'current_session':{'state':'Race','attributes':{'start':'2026-11-08T17:00:00Z','live_status':'Finished'}}}
+        with patch('custom_components.sports_hub.enrichment.datetime',Clock),patch('custom_components.sports_hub.f1_results.datetime',Clock):
+            data=(await p.f1({'key':'f1'},'en',live))['f1']
+            cleared=(await p.f1({'key':'f1'},'en',{}))['f1']
+            self.assertEqual(cleared['focus']['round'],'2')
+        self.assertEqual(data['focus']['round'],'2');self.assertEqual(data['radar']['location']['name'],'Las Vegas')
+        self.assertFalse(data['live_available']);self.assertEqual(data['last_completed']['round'],'1')
+        self.assertEqual(p.f1_weekend.call_args.args[1]['round'],'2');self.assertEqual(p.f1_forecast.call_args.args[0]['round'],'2')
+    async def test_archive_keeps_selected_year_and_round_and_rejects_mismatched_results(self):
+        p=EnrichmentProvider(None)
+        async def get(url,*args,**kwargs):
+            if '2025.json' in url:return item(self.calendar('2025'))
+            if '/results.json' in url:return item(self.results('2025','1'))
+            return item({'MRData':{'RaceTable':{'Races':[{'season':'2025','round':'1','QualifyingResults':[{'position':'1','number':'1','Driver':{'givenName':'Test','familyName':'Pole'}}]}]}}})
+        p.get=AsyncMock(side_effect=get)
+        one=await p.f1_archive({'key':'f1'},2025,1);self.assertEqual(one['results'][0]['name'],'Test Winner');self.assertEqual(one['qualifying'][0]['name'],'Test Pole')
+        two=await p.f1_archive({'key':'f1'},2025,2);self.assertEqual(two['results'],[]);self.assertEqual(two['qualifying'],[]);self.assertEqual(two['race']['name'],'Next GP')
+        missing=await p.f1_archive({'key':'f1'},2025,39);self.assertEqual(missing['results'],[])
+    async def test_archive_requires_approved_f1_dashboard_and_rejects_future_year(self):
+        provider=SimpleNamespace(f1_archive=AsyncMock(return_value={'kind':'f1_archive'}))
+        profile={'key':'league:racing:f1','target':'racing:f1'}
+        manager=SimpleNamespace(users={'alice':{profile['key']:profile}},shared={})
+        hass=SimpleNamespace(data={DATA_KEY:manager,CONTEXT_KEY:provider})
+        conn=SimpleNamespace(user=SimpleNamespace(id='bob'),send_error=Mock(),send_result=Mock())
+        msg={'id':1,'key':profile['key'],'season':2025}
+        await websocket_context.__wrapped__(hass,conn,msg);provider.f1_archive.assert_not_awaited()
+        conn.user.id='alice';await websocket_context.__wrapped__(hass,conn,msg);provider.f1_archive.assert_awaited_once()
+        await websocket_context.__wrapped__(hass,conn,{**msg,'season':9999});self.assertEqual(conn.send_error.call_args.args[1],'invalid_selection')
+    async def test_forecast_uses_selected_track_and_exact_race_hour_not_current_weather(self):
+        p=EnrichmentProvider(None);date=(NOW+timedelta(days=4)).replace(minute=0,second=0,microsecond=0)
+        race={'name':'Next GP','date':date.isoformat(),'sessions':[{'name':'Race','time_confirmed':True}],'location':{'latitude':36.1,'longitude':-115.1}}
+        p.get=AsyncMock(return_value=item({'hourly':{'time':[NOW.timestamp(),date.timestamp()],'temperature_2m':[30,15],'precipitation_probability':[0,25],'wind_speed_10m':[8,12]}}))
+        forecast=await p.f1_forecast(race);self.assertEqual(forecast['values']['temperature_2m'],15)
+        self.assertIn('latitude=36.1',p.get.call_args.args[0]);self.assertEqual(forecast['meeting'],'Next GP')
+        p.get=AsyncMock(return_value=item({'hourly':{'time':[NOW.timestamp()],'temperature_2m':[30]}}))
+        self.assertIsNone(await p.f1_forecast(race))

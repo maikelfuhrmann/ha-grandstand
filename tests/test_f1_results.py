@@ -21,11 +21,32 @@ class F1ResultsTests(unittest.TestCase):
         data=parse_result_page('<a href="/en/results/2026/races/1299/brazil/race-result">Brazil</a><a href="https://evil.example/en/results/2026/races/1/brazil/race-result">Bad</a>')
         self.assertEqual(result_root(data,'2026','interlagos'),'https://www.formula1.com/en/results/2026/races/1299/brazil')
         self.assertIsNone(result_root(data,'2025','interlagos'));self.assertIsNone(result_root(data,'2026','unknown'))
-    def test_weekend_selection_preserves_race_day_and_last_results_between_races(self):
+    def test_weekend_advances_after_finished_main_race_but_not_qualifying_or_sprint(self):
         races=[{'round':'1','date':'2026-11-08T17:00:00Z'},{'round':'2','date':'2026-11-22T06:00:00Z'}]
-        now=lambda day:datetime(2026,11,day,19,tzinfo=timezone.utc)
-        for day in [8,9,15]:self.assertEqual(select_weekend(races,now(day))['round'],'1')
-        self.assertEqual(select_weekend(races,now(20))['round'],'2')
+        now=datetime(2026,11,8,19,tzinfo=timezone.utc)
+        def live(label,status='finished',start='2026-11-08T17:00:00Z'):
+            return {'current_session':{'state':label,'attributes':{'name':label,'start':start,'live_status':status},'updated_at':now.isoformat()}}
+        self.assertEqual(select_weekend(races,now,live('Race'))['round'],'2')
+        for label in ('Sprint','Qualifying','Sprint Qualifying','Practice 3'):
+            self.assertEqual(select_weekend(races,now,live(label))['round'],'1')
+        self.assertEqual(select_weekend(races,now,live('Race',start='2026-10-25T17:00:00Z'))['round'],'1')
+        self.assertEqual(select_weekend(races,now,completed={'season':'2026','round':'1'})['round'],'2')
+        self.assertEqual(select_weekend(races,now,completed={'season':'2025','round':'1'})['round'],'1')
+    def test_expired_schedule_advances_but_a_fresh_suspended_race_is_retained(self):
+        races=[{'round':'1','date':'2026-11-08T17:00:00Z'},{'round':'2','date':'2026-11-22T06:00:00Z'}]
+        now=datetime(2026,11,8,23,tzinfo=timezone.utc)
+        live={'current_session':{'state':'Race','attributes':{'start':races[0]['date'],'live_status':'suspended'},'updated_at':now.isoformat()}}
+        self.assertEqual(select_weekend(races,now)['round'],'2')
+        self.assertEqual(select_weekend(races,now,live)['round'],'1')
+        live['current_session']['updated_at']='2026-11-08T16:00:00Z'
+        self.assertEqual(select_weekend(races,now,live)['round'],'2')
+        self.assertIsNone(select_weekend(races,datetime(2026,12,8,tzinfo=timezone.utc)))
+        self.assertIsNone(select_weekend([{'date':'bad'}],now))
+    def test_status_from_different_session_cannot_finish_current_race(self):
+        race={'round':'1','date':'2026-11-08T17:00:00Z'}
+        live={'current_session':{'state':'Race','attributes':{'start':race['date'],'live_status':'Started'}},
+              'session_status':{'state':'finished','attributes':{'start':'2026-11-07T17:00:00Z'}}}
+        self.assertEqual(select_weekend([race],datetime(2026,11,8,18,tzinfo=timezone.utc),live),race)
     def test_jolpica_results_from_a_different_weekend_are_rejected(self):
         data={'MRData':{'RaceTable':{'Races':[{'season':'2026','round':'19','QualifyingResults':[{'position':'1'}]}]}}}
         self.assertEqual(jolpica_qualifying(data,'2026','20'),[])

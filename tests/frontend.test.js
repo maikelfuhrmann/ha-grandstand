@@ -196,3 +196,39 @@ test('every matchday event remains reachable beyond the initial page, independen
  assert.equal((panel._personalBlock('results','Results',events).match(/<article/g)||[]).length,12);
  assert.equal(panel._personalBlock('live','Live',[]),'');
 });
+
+import {f1DossierMethods} from '../custom_components/sports_hub/frontend/f1-dossier.js';
+import {f1ArchiveMethods} from '../custom_components/sports_hub/frontend/f1-archive.js';
+const f1Profile={key:'league:racing:f1',name:'Formula 1',target:'racing:f1'};
+function f1PanelFixture(){return {...dossierMethods,...f1DossierMethods,...f1ArchiveMethods,t:words.en,now:Date.parse('2026-11-13T12:00Z'),view:'results',activeDashboard:f1Profile,_format:s=>s,_sourceSummary:()=>'',_render:()=>{},_hass:{user:{id:'a'}},isConnected:true};}
+test('results show race classification first, qualifying below, two archive dropdowns and no starting grid',()=>{
+ const p=f1PanelFixture(),f1={season:'2026',last_completed:{season:'2026',round:'1'}};p._ensureF1Archive=()=>{};
+ p._f1Archives={'league:racing:f1:2026:1':{data:{season:'2026',round:'1',race:{name:'Brazil GP',date:'2026-11-08',circuit:'Interlagos'},calendar:[{round:'1',name:'Brazil GP'}],results:[{rank:1,name:'Race winner'}],qualifying:[{position:1,name:'Pole sitter'}]}}};
+ const html=p._f1Dossier(f1Profile,{f1,bridge:{available:true,cards_enabled:true}});
+ assert.ok(html.indexOf('Race results')<html.indexOf('Race winner'));assert.ok(html.indexOf('Race winner')<html.indexOf('Pole sitter'));
+ assert.equal((html.match(/<select /g)||[]).length,2);assert.ok(!html.includes('data-f1-slot'));assert.ok(!html.includes('Starting grid'));
+ p.hideScores=true;assert.ok(!p._f1Dossier(f1Profile,{f1}).includes('Race winner'));
+});
+test('next weekend live and radar do not mount previous timing or Circle of Doom',()=>{
+ const p=f1PanelFixture();p.view='live';p._radar=r=>`RADAR:${r?.event_name}`;
+ const html=p._f1Dossier(f1Profile,{bridge:{available:true,cards_enabled:true,entities:{driver_positions:'sensor.old'}},f1:{focus:{name:'Next GP',sessions:[]},radar:{event_name:'Next GP'},live_available:false}});
+ assert.ok(html.includes('Next GP'));assert.ok(html.includes('RADAR:Next GP'));assert.ok(html.includes(words.en.nextLivePending));assert.deepEqual(p._f1Specs,{});
+});
+test('a previous native starting grid cannot populate an unpublished next race',()=>{
+ const resource={status:'ready',data:{status:'ready',context:{season:2026,round:21},payload:{attributes:{meeting_name:'Previous GP',grid:[{racing_number:'1',driver_name:'Old pole',grid_position:1}]}}}};
+ assert.equal(f1WeekendModel(resource,{season:'2026',round:'22',meeting:'Next GP'},true).grid.length,0);
+ assert.equal(f1WeekendModel(resource,{season:'2026',round:'21',meeting:'Previous GP'},true).grid.length,1);
+});
+test('archive responses stay with their requested year even when dropdowns change in flight',async()=>{
+ const p=f1PanelFixture(),pending=[];p._hass.callWS=msg=>new Promise(resolve=>pending.push({msg,resolve}));
+ const first=p._ensureF1Archive(f1Profile,{season:'2025',round:'1'});const second=p._ensureF1Archive(f1Profile,{season:'2024',round:'2'});
+ pending[1].resolve({season:'2024',round:'2'});await second;pending[0].resolve({season:'2025',round:'1'});await first;
+ assert.equal(p._f1Archives['league:racing:f1:2024:2'].data.season,'2024');assert.equal(pending[1].msg.round,2);
+ const third=p._ensureF1Archive(f1Profile,{season:'2023',round:''});p._hass.user={id:'b'};pending[2].resolve({season:'2023'});await third;
+ assert.equal(p._f1Archives['league:racing:f1:2023:last'].data,undefined);
+});
+test('changing archive year clears the previous round without changing live focus',()=>{
+ const p=f1PanelFixture();p._dossierData=()=>({f1:{season:'2026'}});p._f1ArchiveSelection={season:'2025',round:'23'};
+ p._changeF1Archive('f1-result-season','2024');assert.deepEqual(p._f1ArchiveSelection,{season:'2024',round:''});
+ p._changeF1Archive('f1-result-race','5');assert.deepEqual(p._f1ArchiveSelection,{season:'2024',round:'5'});
+});
