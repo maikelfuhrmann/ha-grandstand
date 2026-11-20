@@ -1,4 +1,5 @@
 import {escapeHtml, safeUrl} from './model.js';
+import {f1Availability} from './f1-navigation.js';
 
 // Same modular F1 Sensor card contract used by the reference Formula 1 dashboard.
 export function f1CardConfig(title,modules,entryId,live=false){
@@ -26,6 +27,7 @@ export const f1DossierMethods={
   },
   _f1Dossier(profile,data){
     this._f1Specs={};const f1=data?.f1||{},native=data?.bridge?.available&&data?.bridge?.cards_enabled;
+    const availability=f1Availability(data,this._f1AvailabilityResource,this.now);
     const module=(type,title,options={},fields)=>({type,title,options,...(fields?{fields}:{})});
     const slot=(id,title,modules,wide=false,live=false)=>this._f1Slot(id,title,modules,wide,live);
     const standings=(teams=false,rows=teams?11:22)=>module('standings',teams?this.t.constructors:this.t.drivers,{competitors:teams?'teams':'drivers',rows,show_availability_notice:false},['result_position',teams?'team':'driver','points','wins']);
@@ -37,12 +39,12 @@ export const f1DossierMethods={
     if(this.hideScores&&!['home','schedule'].includes(this.view))return header+this._spoilerNotice();
     if(this.view==='practice')return header+this._f1Practice(profile,f1);
     if(this.view==='results')return header+this._f1Archive(profile,f1);
-    if(['qualifying','grid'].includes(this.view)&&!f1.focus)return header+this._f1Focus(f1);
+    if(['qualifying','grid'].includes(this.view)&&!availability[this.view])return header+this._f1Focus(f1);
     if(['live','raceControl','strategy'].includes(this.view)&&!f1.live_available)return header+this._f1Focus(f1)+`<p class="notice">${escapeHtml(this.t.nextLivePending)}</p>`+this._radar(f1.radar,'f1');
     if(native){
       if(this.view==='home'){
         content+=`<div class="f1-wide">${this._f1Focus(f1)}</div>`;
-        if(!this.hideScores&&f1.focus)content+=slot('starting-grid',this.t.grid,[],true);
+        if(!this.hideScores&&availability.grid)content+=slot('starting-grid',this.t.grid,[],true);
         if(!this.hideScores&&f1.focus)content+=`<div class="f1-wide">${this._f1Practice(profile,f1,true)}</div>`;
         content+=this._f1Forecast(f1);
         if(!this.hideScores){content+=slot('compact-wm',this.t.championship,[standings(false,5),standings(true,5)]);if(f1.live_available)content+=slot('last-control',this.t.raceControl,[module('race_control','',{presentation:'latest_message',limit:1,show_clear_button:false})],false,true);}
@@ -75,11 +77,11 @@ export const f1DossierMethods={
       if(['championship','schedule'].includes(this.view))content+=`<details class="source-details f1-independent"><summary>Jolpica · ${escapeHtml(this.t.seasonOverview)}</summary>${this._f1Fallback(f1)}</details>`;
     }else content=`${data?`<p class="notice">${escapeHtml(this.t.f1Setup)} <a href="https://nicxe.github.io/f1_sensor/" target="_blank" rel="noopener noreferrer">F1 Sensor ↗</a></p>`:''}${this._f1Fallback(f1)}${this.view==='home'?this._dossierSection(this.t.news,this._news(data,4),'view','news'):''}`;
     if(!native&&!this.hideScores){
-      const resultSlots=this.view==='qualifying'?slot('qualifying',this.t.qualifying,[],true):'';
-      const gridSlot=['home','grid'].includes(this.view)?slot('starting-grid',this.t.grid,[],true):'';
+      const resultSlots=this.view==='qualifying'&&availability.qualifying?slot('qualifying',this.t.qualifying,[],true):'';
+      const gridSlot=['home','grid'].includes(this.view)&&availability.grid?slot('starting-grid',this.t.grid,[],true):'';
       content=`<div class="f1-grid">${resultSlots}${gridSlot}</div>`+(this.view==='home'&&f1.focus?this._f1Practice(profile,f1,true):'')+content;
     }
-    if(['home','live','schedule','strategy'].includes(this.view))content+=this._radar(f1.radar,'f1');
+    if(availability.weatherRadar&&['home','live','schedule','strategy'].includes(this.view))content+=this._radar(f1.radar,'f1');
     return header+content;
   },
   _f1Fallback(f1){
