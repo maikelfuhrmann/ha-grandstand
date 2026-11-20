@@ -39,7 +39,8 @@ def setup_context(hass):
 
 
 @websocket_api.websocket_command({'type':'sports_hub/context','key':str,vol.Optional('language',default='en'):str,
-                                vol.Optional('season'):vol.All(int,vol.Range(min=1950,max=9999)),vol.Optional('round'):vol.All(int,vol.Range(min=1,max=40))})
+                                vol.Optional('season'):vol.All(int,vol.Range(min=1950,max=9999)),vol.Optional('round'):vol.All(int,vol.Range(min=1,max=40)),
+                                vol.Optional('practice'):vol.All(int,vol.Range(min=0,max=3))})
 @websocket_api.async_response
 async def websocket_context(hass,connection,msg):
     user=connection.user
@@ -49,10 +50,10 @@ async def websocket_context(hass,connection,msg):
     profile=manager.users.get(user.id,{}).get(msg['key']) or manager.shared.get(msg['key'])
     if not profile:
         connection.send_error(msg['id'],'not_found','Approved dashboard not found');return
-    if 'season' in msg or 'round' in msg:
-        if profile.get('target')!='racing:f1' or 'season' not in msg or msg['season']>datetime.now(timezone.utc).year:
+    if 'season' in msg or 'round' in msg or 'practice' in msg:
+        if profile.get('target')!='racing:f1' or 'season' not in msg or msg['season']>datetime.now(timezone.utc).year or 'practice' in msg and msg['season']<2023:
             connection.send_error(msg['id'],'invalid_selection','Invalid Formula 1 archive selection');return
-        result=await hass.data[CONTEXT_KEY].f1_archive(profile,msg['season'],msg.get('round'))
+        result=await hass.data[CONTEXT_KEY].f1_practice(msg['season'],msg.get('round'),msg['practice'] or None) if 'practice' in msg else await hass.data[CONTEXT_KEY].f1_archive(profile,msg['season'],msg.get('round'))
         connection.send_result(msg['id'],result);return
     coordinators=hass.data.get(DOMAIN,{})
     if not coordinators:

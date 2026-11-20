@@ -1,7 +1,9 @@
 """On-demand, cached club dossiers and Formula 1 season data."""
 import asyncio
+from collections import deque
 from datetime import datetime, timedelta, timezone
 import re
+import time
 from urllib.parse import urlencode
 from xml.etree.ElementTree import ParseError
 
@@ -13,6 +15,7 @@ from .const import API_ROOT, VERSION
 from .enrichment_model import normalize_table, normalize_schedule, normalize_team, normalize_roster, normalize_news_xml, normalize_news_espn, normalize_f1, infer_home_venue
 from .model import parse_time
 from .f1_results import parse_result_page, result_root, result_rows, select_weekend, weekend_session, jolpica_qualifying, F1_SITE
+from .f1_practice import practice_sessions, practice_rows, official_practice_rows
 
 LANGUAGES={'de':('DE','de'),'en':('US','en'),'es':('ES','es'),'fr':('FR','fr'),'it':('IT','it'),'nl':('NL','nl')}
 
@@ -20,8 +23,20 @@ LANGUAGES={'de':('DE','de'),'en':('US','en'),'es':('ES','es'),'fr':('FR','fr'),'
 class EnrichmentProvider:
     def __init__(self,session):
         self.session=session;self.cache={};self.pending={};self.semaphore=asyncio.Semaphore(4);self.f1_completed=set()
+        self.openf1_lock=asyncio.Lock();self.openf1_requests=deque()
 
-    async def get(self,url,ttl=900,xml=False,html=False):
+    async def _openf1_slot(self):
+        async with self.openf1_lock:
+            now=time.monotonic()
+            while self.openf1_requests and now-self.openf1_requests[0]>=61:self.openf1_requests.popleft()
+            wait=max(0,self.openf1_requests[-1]+0.4-now) if self.openf1_requests else 0
+            if len(self.openf1_requests)>=29:wait=max(wait,self.openf1_requests[0]+61-now)
+            if wait:await asyncio.sleep(wait)
+            now=time.monotonic()
+            while self.openf1_requests and now-self.openf1_requests[0]>=61:self.openf1_requests.popleft()
+            self.openf1_requests.append(now)
+
+    async def get(self,url,ttl=900,xml=False,html=False,array=False):
         now=datetime.now(timezone.utc);cached=self.cache.get(url)
         if cached and cached['expires']>now:return cached
         if url in self.pending:return await asyncio.shield(self.pending[url])
@@ -29,18 +44,19 @@ class EnrichmentProvider:
             old=self.cache.get(url,{})
             try:
                 async with self.semaphore:
+                    if url.startswith('https://api.openf1.org/v1/'):await self._openf1_slot()
                     async with self.session.get(url,headers={'User-Agent':f'HA-Sports-Hub/{VERSION}'},timeout=aiohttp.ClientTimeout(total=18)) as response:
-                        response.raise_for_status()
+                        if not (array and response.status==404):response.raise_for_status()
                         raw=bytearray()
                         async for chunk in response.content.iter_chunked(65536):
                             raw.extend(chunk)
                             if len(raw)>4_000_000:raise ValueError('Response too large')
                         import json
-                        data=normalize_news_xml(raw,now) if xml else parse_result_page(raw) if html else json.loads(raw)
-                        if not isinstance(data,list if xml else dict):raise ValueError('Unexpected response')
+                        data=[] if array and response.status==404 else normalize_news_xml(raw,now) if xml else parse_result_page(raw) if html else json.loads(raw)
+                        if not isinstance(data,list if xml or array else dict):raise ValueError('Unexpected response')
                 item={'data':data,'updated_at':now.isoformat(),'error':False,'expires':now+timedelta(seconds=ttl)}
             except (aiohttp.ClientError,asyncio.TimeoutError,ValueError,TypeError,ParseError):
-                item={'data':old.get('data',[] if xml else {}),'updated_at':old.get('updated_at'),'error':True,'expires':now+timedelta(seconds=120)}
+                item={'data':old.get('data',[] if xml or array else {}),'updated_at':old.get('updated_at'),'error':True,'expires':now+timedelta(seconds=120)}
             if len(self.cache)>=256:self.cache.pop(next(iter(self.cache)))
             self.cache[url]=item
             return item
@@ -243,3 +259,41 @@ class EnrichmentProvider:
         return {'kind':'f1_archive','season':str(season),'calendar':races,'round':chosen,'race':race,
                 'results':normalized['results'] if valid else [],'qualifying':jolpica_qualifying(qualifying['data'],season,chosen) if qualifying else [],
                 'error':any(i['error'] for _,i in items),'sources':[{'name':'Jolpica · '+name,'updated_at':i['updated_at'],'stale':i['error']} for name,i in items]}
+
+    async def f1_practice(self,season,round_number=None,practice=None):
+        calendar=await self.get(f'https://api.jolpi.ca/ergast/f1/{season}.json?limit=100',3600)
+        normalized=normalize_f1(calendar['data'],{},{},{})
+        races=normalized['calendar'] if normalized['season']==str(season) else []
+        race=next((r for r in races if str(r['round'])==str(round_number)),None) if round_number else select_weekend(races) or (races[-1] if races else None)
+        data={'kind':'f1_practice','season':str(season),'round':str(race['round']) if race else str(round_number or ''),
+              'calendar':races,'race':race,'sessions':[],'rows':[],'sources':[], 'error':calendar['error']}
+        if not race:return data
+        source=lambda name,item:{'name':name,'updated_at':item['updated_at'],'stale':item['error']}
+        data['sources'].append(source('Jolpica · Calendar',calendar))
+        date=parse_time(race['date']);now=datetime.now(timezone.utc)
+        query=urlencode({'year':season,'session_type':'Practice','date_start>':(date-timedelta(days=5)).date().isoformat(),'date_start<':(date+timedelta(days=1)).date().isoformat()})
+        sessions=await self.get('https://api.openf1.org/v1/sessions?'+query,300,array=True)
+        data['sources'].append(source('OpenF1 · Sessions',sessions));data['error']=calendar['error'] or sessions['error']
+        data['sessions']=practice_sessions(race,sessions['data'],now)
+        selected=next((s for s in data['sessions'] if s['number']==practice),None) if practice else next(iter([s for s in data['sessions'] if parse_time(s['date'])<=now][::-1]),None) or next(iter(data['sessions']),None)
+        if not selected:return data
+        data['selected']=selected['number'];data['session']=selected
+        if selected['state'] in ('scheduled','cancelled'):return data
+        items={};official=[]
+        if selected['archive_ready'] and selected['session_key']:
+            keys=('session_result','drivers','stints','laps')
+            values=await asyncio.gather(*(self.get(f"https://api.openf1.org/v1/{key}?session_key={selected['session_key']}",900,array=True) for key in keys))
+            items=dict(zip(keys,values));data['sources'] += [source('OpenF1 · '+key,item) for key,item in items.items()]
+        if not items.get('session_result',{}).get('data'):
+            index=await self.get(f'{F1_SITE}/en/results/{season}/races',3600,html=True)
+            root=result_root(index['data'],str(season),race.get('circuit_id'))
+            if root:
+                page=await self.get(root+f"/practice/{selected['number']}",300,html=True)
+                official=official_practice_rows(page['data']);data['sources'].append(source('Formula1.com · Practice',page))
+        data['rows']=practice_rows(selected,*(items.get(k,{}).get('data',[]) for k in ('session_result','drivers','stints','laps')),official)
+        data['classification_available']=bool(data['rows'] and not data['rows'][0]['recorded_only'])
+        data['error']=any(s['stale'] for s in data['sources'])
+        data['tyres_available']=any(row['compounds'] for row in data['rows'])
+        data['archive_pending']=not selected['archive_ready']
+        data['generated_at']=now.isoformat()
+        return data
