@@ -196,3 +196,21 @@ class F1DossierRegression(unittest.IsolatedAsyncioTestCase):
         self.assertIn('latitude=36.1',p.get.call_args.args[0]);self.assertEqual(forecast['meeting'],'Next GP')
         p.get=AsyncMock(return_value=item({'hourly':{'time':[NOW.timestamp()],'temperature_2m':[30]}}))
         self.assertIsNone(await p.f1_forecast(race))
+    async def test_grid_is_refreshed_after_qualifying_and_accepts_a_late_penalty(self):
+        from unittest.mock import patch
+        from custom_components.sports_hub.f1_results import parse_result_page
+        race={'season':'2026','round':'21','name':'Las Vegas GP','circuit_id':'vegas','date':'2026-11-22T04:00Z','sessions':[{'name':'Qualifying','date':'2026-11-21T04:00Z'}]}
+        position=['1'];p=EnrichmentProvider(None)
+        async def get(url,*args,**kwargs):
+            if url.endswith('/races'):return item({'links':['/en/results/2026/races/1300/las-vegas/race-result']})
+            if url.endswith('/starting-grid'):return item(parse_result_page('<table><tr><th>Pos.</th><th>No.</th><th>Driver</th><th>Team</th><th>Time</th></tr><tr><td>'+position[0]+'</td><td>63</td><td>Driver A</td><td>Team A</td><td>1:30.000</td></tr><tr><td>2</td><td>10</td><td>Driver B</td><td>Team B</td><td>1:31.000</td></tr></table>'))
+            return item({})
+        p.get=AsyncMock(side_effect=get)
+        class Clock(datetime):
+            @classmethod
+            def now(cls,tz=None):return cls(2026,11,22,3,55,tzinfo=timezone.utc)
+        with patch('custom_components.sports_hub.enrichment.datetime',Clock):
+            first=await p.f1_weekend({'season':'2026'},race);position[0]='6';second=await p.f1_weekend({'season':'2026'},race)
+        self.assertEqual(first['grid']['rows'][0]['position'],1);self.assertEqual(second['grid']['rows'][0]['position'],6)
+        grid_calls=[c for c in p.get.call_args_list if c.args[0].endswith('/starting-grid')]
+        self.assertTrue(grid_calls);self.assertTrue(all(c.args[1]==60 for c in grid_calls))

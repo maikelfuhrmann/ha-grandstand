@@ -274,3 +274,55 @@ test('unclassified practice activity is labelled as recorded laps without a fict
  p._f1Practices={'league:racing:f1:2026:21:latest':{data}};
  const html=p._f1Practice(f1Profile,f1);assert.match(html,/No official classification/);assert.match(html,/Recorded laps/);assert.doesNotMatch(html,/Published classification/);
 });
+
+import {f1Availability,f1NavigationGroups,f1NavigationMethods} from '../custom_components/sports_hub/frontend/f1-navigation.js';
+const navWeekend={season:'2026',round:'21',meeting:'Las Vegas',race_date:'2026-11-22T04:00Z',qualifying:{rows:[]},grid:{rows:[]}};
+function navFixture(){return {f1:{season:'2026',focus:{season:'2026',round:'21'},weekend:structuredClone(navWeekend),radar:{location:{latitude:36,longitude:-115}},live_available:false},bridge:{available:false}};}
+const navTime=Date.parse('2026-11-20T08:00Z');
+test('navigation groups keep live tools together and hide unpublished qualifying and grid',()=>{
+ const d=navFixture(),a=f1Availability(d,null,navTime),groups=f1NavigationGroups(a);
+ assert.deepEqual(groups.map(g=>g.id),['home','weekend','season','results','news']);
+ assert.deepEqual(groups.find(g=>g.id==='weekend').views,['practice','weatherRadar']);
+ d.bridge={available:true,cards_enabled:true};d.f1.live_available=true;
+ assert.deepEqual(f1NavigationGroups(f1Availability(d,null,navTime)).find(g=>g.id==='live').views,['live','raceControl','strategy']);
+});
+test('qualifying unlocks a provisional grid and later published penalties replace it',()=>{
+ const d=navFixture();d.f1.weekend.qualifying={rows:[{position:1,number:'63',name:'Pole'},{position:2,number:'10',name:'Second'}]};
+ assert.equal(f1Availability(d,null,navTime).grid,true);assert.equal(f1Availability(d,null,navTime).qualifying,true);
+ assert.equal(f1WeekendModel(null,d.f1.weekend,false,navTime).status,'provisional');
+ d.f1.weekend.grid={rows:[{position:3,number:'63',name:'Pole'},{position:1,number:'10',name:'Second'}],notes:['Grid penalty']};
+ let model=f1WeekendModel(null,d.f1.weekend,false,navTime);assert.equal(model.status,'published');assert.equal(model.grid[0].number,'10');assert.equal(model.grid[1].delta,2);
+ d.f1.weekend.grid.rows[0].position=0;model=f1WeekendModel(null,d.f1.weekend,false,navTime);assert.equal(model.pit[0].number,'63');assert.equal(model.grid.length,1);
+});
+test('previous-weekend and spoiler-blocked native grids never make hidden tabs visible',()=>{
+ const d=navFixture();d.bridge={available:true,cards_enabled:true};
+ const native={status:'ready',data:{status:'ready',context:{season:2026,round:20},payload:{attributes:{grid:[{racing_number:'63',driver_name:'Old pole',grid_position:1}]}}}};
+ assert.equal(f1Availability(d,native,navTime).grid,false);
+ native.data.context.round=21;assert.equal(f1Availability(d,native,navTime).grid,true);
+ d.f1.weekend.qualifying={rows:[{position:1,number:'63',name:'Pole'}]};native.data.status='blocked';
+ assert.equal(f1Availability(d,native,navTime).grid,false);assert.equal(f1Availability(d,native,navTime).qualifying,false);
+ d.f1.weekend.round='20';native.data.status='ready';assert.equal(f1Availability(d,native,navTime).grid,false);
+});
+test('adding a grid does not switch the selected tab, while rollover safely removes old views',()=>{
+ const p={...f1NavigationMethods,_watchF1Availability(){},view:'practice',now:navTime},d=navFixture();
+ p._syncF1Navigation(f1Profile,d);d.f1.weekend.qualifying={rows:[{position:1,number:'63',name:'Pole'}]};p._syncF1Navigation(f1Profile,d);assert.equal(p.view,'practice');
+ p.view='grid';p._syncF1Navigation(f1Profile,d);assert.equal(p.view,'grid');
+ d.f1.focus.round='22';p._syncF1Navigation(f1Profile,d);assert.equal(p.view,'practice');
+ p.view='strategy';p._syncF1Navigation(f1Profile,d);assert.equal(p.view,'home');
+});
+test('hidden grid discovery remains subscribed and stops on user or weekend change',async()=>{
+ const d=navFixture();d.bridge={available:true,cards_enabled:true,entry_id:'f1'};let callback,stopped=0,subscribed=0,renders=0;
+ const p={...f1NavigationMethods,now:navTime,isConnected:true,activeDashboard:f1Profile,_hass:{user:{id:'a'},connection:{}},_dossierData:()=>d,_render(){renders++;},_f1GridWatcher:async()=>((h,e,c,cb)=>{subscribed++;callback=cb;return ()=>{stopped++;};})};
+ await p._watchF1Availability(f1Profile,d);await p._watchF1Availability(f1Profile,d);assert.equal(subscribed,1);
+ callback({status:'ready',data:{status:'ready',context:{season:2026,round:21},payload:{attributes:{grid:[{racing_number:'63',driver_name:'Pole',grid_position:1}]}}}});
+ assert.equal(renders,1);assert.equal(f1Availability(d,p._f1AvailabilityResource,navTime).grid,true);
+ const old=callback;d.f1.focus.round='22';await p._watchF1Availability(f1Profile,d);assert.equal(stopped,1);assert.equal(subscribed,2);old({status:'error'});assert.equal(p._f1AvailabilityResource,null);
+ p._stopF1Availability();assert.equal(stopped,2);assert.equal(p._f1AvailabilityResource,null);
+});
+test('unpublished home grid and upcoming practice placeholders stay hidden',()=>{
+ const p={...practicePanel(),_radar:()=>'',view:'home'},d=navFixture();p._f1Practices={};
+ const html=p._f1Dossier(f1Profile,d);assert.doesNotMatch(html,/data-f1-slot="starting-grid"/);assert.doesNotMatch(html,/Waiting for the published practice/);
+ const nav={...p,...f1NavigationMethods}._f1Navigation(f1Profile,d,()=>'<svg></svg>');
+ assert.match(nav,/f1-primary-nav/);assert.doesNotMatch(nav,/data-value="grid"/);assert.doesNotMatch(nav,/data-value="strategy"/);
+ for(const lang of ['en','de','es','fr','it','nl'])for(const key of ['navSeason','navStandings','navCalendar','navWeather','navSections','gridUpdateHint'])assert.ok(words[lang][key]);
+});
