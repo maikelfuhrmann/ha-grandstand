@@ -31,10 +31,11 @@ export const f1DossierMethods={
     const standings=(teams=false,rows=teams?11:22)=>module('standings',teams?this.t.constructors:this.t.drivers,{competitors:teams?'teams':'drivers',rows,show_availability_notice:false},['result_position',teams?'team':'driver','points','wins']);
     const control=limit=>module('race_control',this.t.raceControl,{limit,order:'newest',list_max_height:600,show_clear_button:false});
     let content='';
-    const header=`<div class="dossier-heading f1-heading ${this.view==='results'?'f1-results-heading':''}"><div><div class="eyebrow">FORMULA 1 · ${escapeHtml(this.view==='results'?this._archiveSelection(f1).season:f1.season||'')}</div><h1>${escapeHtml(this.view==='results'?this.t.raceResults:profile.name)}</h1></div>${this._hass?.panels?.['dashboard-f1']?`<a class="cta" href="/dashboard-f1">${escapeHtml(this.t.nativeF1)} ↗</a>`:''}</div><div class="dossier-controls"><span class="meta">${escapeHtml(this.t.f1Access)}</span><button class="spoiler" data-action="spoiler" aria-pressed="${this.hideScores}">${escapeHtml(this.hideScores?this.t.show:this.t.hide)}</button></div>`;
+    const header=`<div class="dossier-heading f1-heading ${this.view==='results'?'f1-results-heading':''}"><div><div class="eyebrow">FORMULA 1 · ${escapeHtml(this.view==='results'?this._archiveSelection(f1).season:this.view==='practice'?this._practiceSelection(f1).season:f1.season||'')}</div><h1>${escapeHtml(this.view==='results'?this.t.raceResults:this.view==='practice'?this.t.practice:profile.name)}</h1></div>${this._hass?.panels?.['dashboard-f1']?`<a class="cta" href="/dashboard-f1">${escapeHtml(this.t.nativeF1)} ↗</a>`:''}</div><div class="dossier-controls"><span class="meta">${escapeHtml(this.t.f1Access)}</span><button class="spoiler" data-action="spoiler" aria-pressed="${this.hideScores}">${escapeHtml(this.hideScores?this.t.show:this.t.hide)}</button></div>`;
     if(this.view==='weatherRadar')return header+this._f1Focus(f1)+this._f1Forecast(f1)+this._radar(f1.radar,'f1');
     if(this.view==='news')return header+this._dossierSection(this.t.news,this._news(data));
     if(this.hideScores&&!['home','schedule'].includes(this.view))return header+this._spoilerNotice();
+    if(this.view==='practice')return header+this._f1Practice(profile,f1);
     if(this.view==='results')return header+this._f1Archive(profile,f1);
     if(['qualifying','grid'].includes(this.view)&&!f1.focus)return header+this._f1Focus(f1);
     if(['live','raceControl','strategy'].includes(this.view)&&!f1.live_available)return header+this._f1Focus(f1)+`<p class="notice">${escapeHtml(this.t.nextLivePending)}</p>`+this._radar(f1.radar,'f1');
@@ -42,6 +43,7 @@ export const f1DossierMethods={
       if(this.view==='home'){
         content+=`<div class="f1-wide">${this._f1Focus(f1)}</div>`;
         if(!this.hideScores&&f1.focus)content+=slot('starting-grid',this.t.grid,[],true);
+        if(!this.hideScores&&f1.focus)content+=`<div class="f1-wide">${this._f1Practice(profile,f1,true)}</div>`;
         content+=this._f1Forecast(f1);
         if(!this.hideScores){content+=slot('compact-wm',this.t.championship,[standings(false,5),standings(true,5)]);if(f1.live_available)content+=slot('last-control',this.t.raceControl,[module('race_control','',{presentation:'latest_message',limit:1,show_clear_button:false})],false,true);}
       }else if(this.view==='live'){
@@ -75,7 +77,7 @@ export const f1DossierMethods={
     if(!native&&!this.hideScores){
       const resultSlots=this.view==='qualifying'?slot('qualifying',this.t.qualifying,[],true):'';
       const gridSlot=['home','grid'].includes(this.view)?slot('starting-grid',this.t.grid,[],true):'';
-      content=`<div class="f1-grid">${resultSlots}${gridSlot}</div>`+content;
+      content=`<div class="f1-grid">${resultSlots}${gridSlot}</div>`+(this.view==='home'&&f1.focus?this._f1Practice(profile,f1,true):'')+content;
     }
     if(['home','live','schedule','strategy'].includes(this.view))content+=this._radar(f1.radar,'f1');
     return header+content;

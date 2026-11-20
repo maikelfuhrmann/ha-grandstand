@@ -26,7 +26,7 @@ export const dossierMethods={
     this._ensureDossier(profile);
     const cache=this._dossiers?.[profile.key+':'+this.lang],data=cache?.data;
     const state=!data?`<div class="dossier-loading" role="status">${escapeHtml(cache?.error?this.t.richError:this.t.richLoading)}${cache?.error?` <button class="cta" data-action="dossier-retry">${escapeHtml(this.t.retry)}</button>`:''}</div>`:'';
-    if(profile.target==='racing:f1')return state+this._f1Dossier(profile,data)+(this.view==='results'?'':this._sourceSummary(data));
+    if(profile.target==='racing:f1')return state+this._f1Dossier(profile,data)+(['results','practice'].includes(this.view)?'':this._sourceSummary(data));
     const team=data?.team||{};
     const upcoming=events.filter(e=>e.state==='scheduled'&&Date.parse(e.date)>=this.now).sort((a,b)=>a.date.localeCompare(b.date));
     const recent=events.filter(e=>e.state==='finished').sort((a,b)=>b.date.localeCompare(a.date));
