@@ -213,7 +213,10 @@ class EnrichmentProvider:
         index,fallback=await asyncio.gather(self.get(f'{F1_SITE}/en/results/{season}/races',3600,html=True),
             self.get(f"https://api.jolpi.ca/ergast/f1/{season}/{race['round']}/qualifying.json?limit=100",300))
         root=result_root(index['data'],season,race.get('circuit_id'))
-        pages=await asyncio.gather(*(self.get(root+'/'+kind,300,html=True) for kind in ('qualifying','starting-grid'))) if root else []
+        now=datetime.now(timezone.utc);qualifying_start=parse_time(result['qualifying_date']);race_start=parse_time(race['date'])
+        # Keep checking the published grid after qualifying, including late penalties.
+        grid_ttl=60 if qualifying_start and race_start and qualifying_start<=now<=race_start+timedelta(hours=4) else 300
+        pages=await asyncio.gather(*(self.get(root+'/'+kind,grid_ttl if kind=='starting-grid' else 300,html=True) for kind in ('qualifying','starting-grid'))) if root else []
         for kind,page in zip(('qualifying','grid'),pages):
             rows=result_rows(page['data'],'qualifying' if kind=='qualifying' else 'grid')
             result[kind]={'rows':rows,'source':'Formula1.com','url':root+('/qualifying' if kind=='qualifying' else '/starting-grid'),
