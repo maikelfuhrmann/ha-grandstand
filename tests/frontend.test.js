@@ -232,3 +232,45 @@ test('changing archive year clears the previous round without changing live focu
  p._changeF1Archive('f1-result-season','2024');assert.deepEqual(p._f1ArchiveSelection,{season:'2024',round:''});
  p._changeF1Archive('f1-result-race','5');assert.deepEqual(p._f1ArchiveSelection,{season:'2024',round:'5'});
 });
+
+import {f1PracticeMethods,practiceClock} from '../custom_components/sports_hub/frontend/f1-practice.js';
+import '../custom_components/sports_hub/frontend/f1-practice-i18n.js';
+const practiceRow={number:63,position:1,name:'George Russell',team:'Mercedes',color:'#00d7b6',best:107.272,gap:0,laps:23,compounds:{WET:6,INTERMEDIATE:17},unassigned_laps:0,best_compound:'INTERMEDIATE',stints:[{number:1,compound:'WET',start:1,end:6,laps:6,tyre_age:1,best:110}]};
+function practicePanel(){return {...f1PanelFixture(),...f1PracticeMethods,view:'practice',now:Date.parse('2026-11-20T12:00Z'),_ensurePractice(){}};}
+function practiceFixture(){return {season:'2026',round:'21',race:{name:'Las Vegas GP',circuit:'Las Vegas'},calendar:[{round:'21',name:'Las Vegas GP'}],sessions:[{number:1,name:'FP1',date:'2026-11-20T00:30Z'},{number:2,name:'FP2',date:'2026-11-20T04:00Z'}],session:{number:2,name:'FP2',date:'2026-11-20T04:00Z',state:'finished'},selected:2,rows:[practiceRow]};}
+test('practice offers published sessions, totals, compounds and expandable driver stints',()=>{
+ const p=practicePanel(),f1={season:'2026',focus:{season:'2026',round:'21'}};
+ p._f1Practices={'league:racing:f1:2026:21:latest':{data:practiceFixture()}};
+ const html=p._f1Dossier(f1Profile,{f1});
+ assert.ok(dossierTabs(f1Profile).includes('practice'));assert.match(html,/George Russell/);assert.match(html,/1:47.272/);assert.match(html,/Laps per compound/);assert.match(html,/practice-driver-63/);assert.match(html,/Tyre age at start/);
+ assert.equal((html.match(/<select /g)||[]).length,2);assert.equal((html.match(/data-action="practice-session"/g)||[]).length,2);
+ assert.doesNotMatch(html,/data-f1-slot/);p.hideScores=true;assert.doesNotMatch(p._f1Dossier(f1Profile,{f1}),/George Russell/);
+});
+test('practice archive selection never replaces the current weekend overview',()=>{
+ const p=practicePanel(),f1={season:'2026',focus:{season:'2026',round:'21'}};p._dossierData=()=>({f1});
+ p._changePractice('season','2025');assert.deepEqual(p._practiceSelection(f1),{season:'2025',round:'',practice:0});
+ p._changePractice('round','2');p._changePractice('session','1');assert.equal(p._practiceSelection(f1).practice,1);
+ assert.deepEqual(p._practiceSelection(f1,true),{season:'2026',round:'21',practice:0});
+ p._changePractice('current');assert.deepEqual(p._practiceSelection(f1),{season:'2026',round:'21',practice:0});
+});
+test('practice responses remain scoped to season, round, session and HA user',async()=>{
+ const p=practicePanel(),pending=[];p._ensurePractice=f1PracticeMethods._ensurePractice;p._hass.callWS=msg=>new Promise(resolve=>pending.push({msg,resolve}));
+ const a=p._ensurePractice(f1Profile,{season:'2026',round:'21',practice:1}),b=p._ensurePractice(f1Profile,{season:'2026',round:'21',practice:2});
+ pending[1].resolve({selected:2});await b;pending[0].resolve({selected:1});await a;
+ assert.equal(p._f1Practices['league:racing:f1:2026:21:2'].data.selected,2);assert.equal(pending[0].msg.practice,1);
+ const c=p._ensurePractice(f1Profile,{season:'2025',round:'1',practice:1});p._hass.user={id:'b'};pending[2].resolve({selected:1});await c;
+ assert.equal(p._f1Practices['league:racing:f1:2025:1:1'].data,undefined);
+});
+test('practice preserves zero, unavailable and unassigned laps and escapes names',()=>{
+ const p=practicePanel();const html=p._practiceTable([{...practiceRow,name:'<script>bad</script>',laps:0,compounds:{},unassigned_laps:0,best:null}]);
+ assert.match(html,/&lt;script&gt;/);assert.match(html,/practice-laps">0</);assert.doesNotMatch(html,/<script>/);
+ assert.equal(practiceClock(null),'–');assert.equal(practiceClock(Infinity),'–');assert.equal(practiceClock(119.9999),'2:00.000');
+ assert.match(p._practiceUsage({compounds:{SOFT:10},unassigned_laps:2}),/Unassigned/);
+ for(const lang of ['en','de','es','fr','it','nl']){for(const key of ['practice','practiceUsageNote','practiceFreeDelay','compoundLaps','practiceCurrent'])assert.ok(words[lang][key]);assert.equal(Object.keys(words[lang].practiceCompounds).length,6);}
+});
+test('unclassified practice activity is labelled as recorded laps without a fictional winner',()=>{
+ const p=practicePanel(),f1={season:'2026',focus:{season:'2026',round:'21'}},data=practiceFixture();
+ data.rows=[{...practiceRow,position:null,best:null,recorded_only:true,laps:1}];
+ p._f1Practices={'league:racing:f1:2026:21:latest':{data}};
+ const html=p._f1Practice(f1Profile,f1);assert.match(html,/No official classification/);assert.match(html,/Recorded laps/);assert.doesNotMatch(html,/Published classification/);
+});
